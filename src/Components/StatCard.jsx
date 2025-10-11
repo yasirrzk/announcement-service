@@ -1,4 +1,3 @@
-// src/components/StatCard.jsx
 import React from 'react';
 import { Paper, Typography, Box, Avatar } from '@mui/material';
 

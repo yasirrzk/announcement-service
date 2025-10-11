@@ -1,5 +1,5 @@
 import "./App.css";
-import AnnouncementDashboard from "./Pages/Dashboard/AnnouncementPage";
+import AnnouncementPage from "./Pages/Dashboard/AnnouncementPage";
 import Header from "./Layout/Header";
 import Navbar from "./Layout/Navbar";
 import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
@@ -7,43 +7,41 @@ import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 const theme = createTheme({
   palette: {
     background: {
-      default: '#f5f5f5' 
-    }
+      default: "#f5f5f5",
+      paper: "#ffffff"
+    },
   },
   components: {
     MuiButton: {
-        styleOverrides: {
-            root: {
-                textTransform: 'none',
-            }
-        }
-    }
-  }
+      styleOverrides: {
+        root: { textTransform: "none" },
+      },
+    },
+  },
 });
 
 function App() {
-
   return (
-    <>
-   <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <Header />
         <Navbar />
-        {/* Area konten utama */}
-        <Box 
-          component="main" 
-          sx={{ 
-            flexGrow: 1, 
-            overflow: 'auto', 
-            p: 3 
+        {/* Konten utama */}
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            overflowY: "auto",
+            px: 4,
+            py: 3,
+            bgcolor: "background.default",
           }}
         >
-          <AnnouncementDashboard />
+          <AnnouncementPage />
         </Box>
       </Box>
     </ThemeProvider>
-    </>
   );
 }
 

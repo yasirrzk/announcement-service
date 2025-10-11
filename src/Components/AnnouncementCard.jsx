@@ -1,4 +1,3 @@
-// src/components/AnnouncementCard.jsx
 import React from 'react';
 import { Card, CardContent, CardMedia, Typography, Box, Chip, CardActions, IconButton } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
