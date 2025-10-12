@@ -34,10 +34,9 @@ const AnnouncementContentStep = () => {
   };
 
   const handleFileDrop = (name, files) => {
-    // Biasanya Anda hanya mengambil file pertama
     if (files.length > 0) {
       setFormData(prev => ({ ...prev, [name]: files[0] }));
-      console.log(`File for ${name}:`, files[0]); // Untuk debugging
+      console.log(`File for ${name}:`, files[0]); 
     }
   };
 
