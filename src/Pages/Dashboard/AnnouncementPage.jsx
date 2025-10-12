@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import {
   Container,
@@ -43,7 +44,7 @@ const navigate = useNavigate();
       {/* Stats */}
       <Grid container spacing={3}>
         {stats.map((stat) => (
-          <Grid item xs={12} sm={6} md={3} key={stat.title}>
+          <Grid item size={3} key={stat.title}>
             <StatCard icon={stat.icon} title={stat.title} count={stat.count} color={stat.color} />
           </Grid>
         ))}
@@ -71,7 +72,7 @@ const navigate = useNavigate();
       {/* Announcements List */}
       <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
         {filteredAnnouncements.map((announcement) => (
-          <Grid item key={announcement.id} xs={12} sm={6} md={4} sx={{ display: "flex" }}>
+          <Grid item key={announcement.id} size={4} sx={{ display: "flex" }}>
             <AnnouncementCard announcement={announcement} />
           </Grid>
         ))}

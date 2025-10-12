@@ -31,6 +31,7 @@ const AnnouncementCard = ({ announcement }) => {
       sx={{
         borderRadius: 4,
         overflow: "hidden",
+        width: "100%",
         transition: "transform 0.25s ease, box-shadow 0.25s ease",
         "&:hover": {
           transform: "translateY(-6px)",
@@ -38,7 +39,7 @@ const AnnouncementCard = ({ announcement }) => {
         },
         display: "flex",
         flexDirection: "column",
-        height: "100%", // biar semua card tingginya sama
+        height: "100%",
       }}
     >
       <CardMedia
