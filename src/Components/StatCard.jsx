@@ -3,7 +3,7 @@ import { Paper, Typography, Box, Avatar } from '@mui/material';
 
 const StatCard = ({ icon, title, count, color }) => {
   return (
-    <Paper elevation={2} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
+    <Paper elevation={2} sx={{ p: 2, width:'100%' , gap:2 ,borderRadius:'8px', display: 'flex', flexDirection:"column", justifyContent: 'center' }}>
       <Avatar sx={{ bgcolor: color, mr: 2 }}>
         {icon}
       </Avatar>
