@@ -63,7 +63,7 @@ const navigate = useNavigate();
           color="primary"
           aria-label="Tambah pengumuman baru"
           sx={{ bgcolor: "primary.main", color: "white", borderRadius: "10px", width: 40, height: 40, "&:hover": { bgcolor: "primary.dark" } }}
-          onClick={() => navigate("/Organization/CreateAnnouncement")}
+          onClick={() => navigate("/organization/create-announcement")}
         >
           <AddIcon />
         </IconButton>

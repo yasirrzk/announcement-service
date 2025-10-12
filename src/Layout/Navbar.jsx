@@ -8,33 +8,33 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import {
-  Dashboard,
-  CorporateFare,
-  CoPresent,
-  Logout,
-  ReceiptLong,
-  Work,
-  Schedule,
-  Inventory,
-  Settings,
-} from "@mui/icons-material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import {
+  attendance,
+  claim,
+  configuration,
+  dashboard,
+  inventory,
+  leave,
+  organization,
+  overtime,
+  workspace,
+} from "../assets/Icons/icons";
 
 const navItems = [
-  { label: "Dashboard", icon: <Dashboard /> },
-  { label: "Organization", icon: <CorporateFare /> },
-  { label: "Attendance", icon: <CoPresent /> },
-  { label: "Leave", icon: <Logout /> },
-  { label: "Claim", icon: <ReceiptLong /> },
-  { label: "Workspace", icon: <Work /> },
-  { label: "Overtime", icon: <Schedule /> },
-  { label: "Inventory", icon: <Inventory /> },
-  { label: "Configuration", icon: <Settings /> },
+  { label: "Dashboard", icon: dashboard },
+  { label: "Organization", icon: organization },
+  { label: "Attendance", icon: attendance },
+  { label: "Leave", icon: leave },
+  { label: "Claim", icon: claim },
+  { label: "Workspace", icon: workspace },
+  { label: "Overtime", icon: overtime },
+  { label: "Inventory", icon: inventory },
+  { label: "Configuration", icon: configuration },
 ];
 
 const Navbar = () => {
-  const [value, setValue] = useState(1); // tab aktif: Organization
+  const [value, setValue] = useState(1);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -42,14 +42,9 @@ const Navbar = () => {
 
   const breadcrumbs = [
     <Typography key="1" color="inherit" variant="body2">
-      Dashboard
+      Organization
     </Typography>,
-    <Chip
-      key="2"
-      label="Organization"
-      size="small"
-      sx={{ fontWeight: "bold" }}
-    />,
+    <Chip key="2" label="" size="small" sx={{ fontWeight: "bold" }} />,
   ];
 
   return (
@@ -64,7 +59,9 @@ const Navbar = () => {
         {navItems.map((item, index) => (
           <Tab
             key={item.label}
-            icon={item.icon}
+            icon={
+              <img src={item.icon} alt={item.label} width="20" height="20" />
+            }
             iconPosition="start"
             label={
               index === 1 ? (
