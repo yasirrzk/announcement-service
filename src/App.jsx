@@ -1,22 +1,38 @@
 import "./App.css";
 import AnnouncementPage from "./Pages/Dashboard/AnnouncementPage";
+import CreateAnnouncement from "./Pages/Organization/CreateAnnouncement";
 import Header from "./Layout/Header";
 import Navbar from "./Layout/Navbar";
 import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
     background: {
       default: "#f5f5f5",
-      paper: "#ffffff"
+      paper: "#ffffff",
     },
   },
   components: {
     MuiButton: {
       styleOverrides: {
-        root: { textTransform: "none" },
+        root: {
+          textTransform: "none",
+          borderRadius: 2,
+        },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12,
+          boxShadow: "0 2px 6px rgba(0,0,0,0.08)",
+        },
+      },
+    },
+  },
+  typography: {
+    fontFamily: `"Inter", "Roboto", "Helvetica", "Arial", sans-serif`,
   },
 });
 
@@ -24,23 +40,29 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <Header />
-        <Navbar />
-        {/* Konten utama */}
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            overflowY: "auto",
-            px: 4,
-            py: 3,
-            bgcolor: "background.default",
-          }}
-        >
-          <AnnouncementPage />
+      <Router>
+        <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+          <Header />
+          <Navbar />
+
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              overflowY: "auto",
+              px: { xs: 2, sm: 3, md: 4 },
+              py: { xs: 2, sm: 3 },
+              bgcolor: "background.default",
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<AnnouncementPage />} />
+              <Route path="/announcement" element={<AnnouncementPage />} />
+              <Route path="/Organization/CreateAnnouncement" element={<CreateAnnouncement />} />
+            </Routes>
+          </Box>
         </Box>
-      </Box>
+      </Router>
     </ThemeProvider>
   );
 }

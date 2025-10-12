@@ -2,6 +2,7 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
+import content from "../assets/image.png"
 
 export const stats = [
   { title: 'Total Announcement', count: 10, icon: <CampaignIcon />, color: 'primary.main' },
@@ -19,7 +20,7 @@ export const announcements = [
     views: 5,
     comments: 12,
     shares: 4,
-    image: 'https://source.unsplash.com/random/400x200?mountain,dark',
+    image: content,
   },
   {
     status: 'Draft',
@@ -29,7 +30,7 @@ export const announcements = [
     views: 0,
     comments: 0,
     shares: 0,
-    image: 'https://source.unsplash.com/random/400x201?mountain,dark',
+    image: content,
   },
    {
     status: 'Unpublished',
@@ -39,9 +40,8 @@ export const announcements = [
     views: 5,
     comments: 12,
     shares: 4,
-    image: 'https://source.unsplash.com/random/400x202?mountain,dark',
+    image: content,
   },
-  // ...Tambahkan data lain sesuai kebutuhan
   {
     status: 'Published',
     date: '12 Aug 2022 10:00 PM',
@@ -50,7 +50,7 @@ export const announcements = [
     views: 5,
     comments: 12,
     shares: 4,
-    image: 'https://source.unsplash.com/random/400x203?mountain,dark',
+    image: content,
   },
   {
     status: 'Draft',
@@ -60,7 +60,7 @@ export const announcements = [
     views: 0,
     comments: 0,
     shares: 0,
-    image: 'https://source.unsplash.com/random/400x204?mountain,dark',
+    image: content,
   },
    {
     status: 'Published',
@@ -70,6 +70,6 @@ export const announcements = [
     views: 5,
     comments: 12,
     shares: 4,
-    image: 'https://source.unsplash.com/random/400x205?mountain,dark',
+    image: content,
   },
 ];
