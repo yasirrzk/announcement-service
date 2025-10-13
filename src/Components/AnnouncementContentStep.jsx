@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   TextField,
@@ -7,25 +7,26 @@ import {
   Select,
   MenuItem,
   OutlinedInput,
+  Chip, 
 } from "@mui/material";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import FileUpload from "../Components/FileUpload";
-import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm";
+import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm"; 
 
 const quillModules = {
-  toolbar: [
-    [{ header: "1" }, { header: "2" }, { font: [] }],
-    ["bold", "italic", "underline", "strike", "blockquote"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
+    toolbar: [
+        [{ header: "1" }, { header: "2" }, { font: [] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [
+            { list: "ordered" },
+            { list: "bullet" },
+            { indent: "-1" },
+            { indent: "+1" },
+        ],
+        ["link", "image", "video"],
+        ["clean"],
     ],
-    ["link", "image", "video"],
-    ["clean"],
-  ],
 };
 
 const AnnouncementContentStep = () => {
@@ -41,8 +42,8 @@ const AnnouncementContentStep = () => {
 
   return (
     <Box component="form" noValidate autoComplete="off">
-      {/* Post Title */}
-      <Box sx={{ mb: 3 }}>
+       {/* Post Title */}
+       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Post Title
         </Typography>
@@ -128,18 +129,15 @@ const AnnouncementContentStep = () => {
             name="tags"
             value={formData.tags}
             onChange={handleChange}
-            input={<OutlinedInput label="Select Tags" />}
-            displayEmpty
-            renderValue={(selected) => {
-              if (selected.length === 0) {
-                return <em>Select Tags</em>;
-              }
-              return selected.join(", ");
-            }}
+            input={<OutlinedInput label="Tags" />} 
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
           >
-            <MenuItem disabled value="">
-              <em>Select Tags</em>
-            </MenuItem>
             {availableTags.map((tag) => (
               <MenuItem key={tag} value={tag}>
                 {tag}
