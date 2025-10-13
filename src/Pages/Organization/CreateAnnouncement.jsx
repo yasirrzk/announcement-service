@@ -67,7 +67,7 @@ const CreateAnnouncement = () => {
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <IconButton onClick={handleNavigateBack} aria-label="go back">
-            <ArrowBackIcon fontSize="large"/>
+            <ArrowBackIcon fontSize="large" />
           </IconButton>
           <Typography variant="h4" fontWeight={700}>
             Create Announcement
@@ -84,7 +84,7 @@ const CreateAnnouncement = () => {
         ))}
       </Stepper>
 
-      {/* Konten Form Sesuai Step */}
+      {/* Konten Form*/}
       <Box>{getStepContent(activeStep)}</Box>
 
       {/* Tombol Aksi */}

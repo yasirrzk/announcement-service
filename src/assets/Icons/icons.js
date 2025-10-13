@@ -7,6 +7,7 @@ import leave from "../Icons/leave.png";
 import organization from "../Icons/organization.png";
 import overtime from "../Icons/overtime.png";
 import workspace from "../Icons/workspace.png";
+import drop from "../Icons/drop-file.png";
 
 export {
   attendance,
@@ -18,4 +19,5 @@ export {
   organization,
   overtime,
   workspace,
+  drop,
 };
