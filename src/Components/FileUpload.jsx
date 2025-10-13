@@ -1,19 +1,35 @@
-import React, { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import { Box, Typography } from "@mui/material";
-import {drop} from "../assets/Icons/icons";
+// File: src/Components/FileUpload.jsx
 
-const FileUpload = ({ onDrop }) => {
-  const onDropCallback = useCallback(
-    (acceptedFiles) => {
-      onDrop(acceptedFiles);
-    },
-    [onDrop]
-  );
+import React, { useState, useEffect } from "react";
+import { useDropzone } from "react-dropzone";
+import { Box, Typography, IconButton } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import { drop } from "../assets/Icons/icons"; 
+
+const FileUpload = ({ onDrop, file, onRemove }) => {
+  const [preview, setPreview] = useState(null);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: onDropCallback,
+    onDrop,
+    accept: { 'image/*': ['.jpeg', '.png', '.gif', '.jpg', '.webp'] }, 
+    multiple: false, 
   });
+
+  useEffect(() => {
+    if (file && file.type && file.type.startsWith('image/')) {
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setPreview(null);
+    }
+  }, [file]); 
+
+  const handleRemoveFile = (event) => {
+    event.stopPropagation(); 
+    if (onRemove) onRemove();
+  };
 
   return (
     <Box
@@ -21,35 +37,65 @@ const FileUpload = ({ onDrop }) => {
       sx={{
         border: "2px dashed #E0E0E0",
         borderRadius: 2,
-        p: 5,
+        p: 2,
         textAlign: "center",
-        backgroundColor: isDragActive
-          ? "rgba(14, 165, 233, 0.2)"
-          : "rgba(14, 165, 233, 0.2)",
+        backgroundColor: isDragActive ? "rgba(14, 165, 233, 0.08)" : "rgba(14, 165, 233, 0.08)",
         cursor: "pointer",
         transition: "background-color 0.2s ease-in-out",
-        "&:hover": {
-          borderColor: "primary.main",
-        },
+        "&:hover": { borderColor: "primary.main" },
+        minHeight: '200px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
       <input {...getInputProps()} />
-      <Box
-        component="img"
-        src={drop}
-        alt="Upload Icon"
-        sx={{
-          width: 48,
-          height: 48,
-          mb: 1,
-        }}
-      />
-      <Typography variant="h6" sx={{ color: "", fontWeight: 600 }}>
-        Drop or select file
-      </Typography>
-      <Typography variant="caption" color="textSecondary">
-        Drop files here or click to browse through your machine.
-      </Typography>
+
+      {preview ? (
+        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+          <img
+            src={preview}
+            alt="Pratinjau"
+            style={{
+              width: '100%',
+              height: '100%',
+              maxHeight: '180px',
+              objectFit: 'cover',
+              borderRadius: '4px',
+            }}
+          />
+          <IconButton
+            size="small"
+            onClick={handleRemoveFile}
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              bgcolor: 'rgba(255, 255, 255, 0.8)',
+              '&:hover': { bgcolor: 'white' }
+            }}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      ) : (
+        <Box>
+          <Box
+            component="img"
+            src={drop}
+            alt="Upload Icon"
+            sx={{ width: 48, height: 48, mb: 1 }}
+          />
+          <Typography variant="h6" color="primary.main" fontWeight={600}>
+            Drop or select file
+          </Typography>
+          <Typography variant="caption" color="textSecondary">
+            Drop files here or click to browse.
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };
