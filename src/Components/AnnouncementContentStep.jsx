@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Box,
   TextField,
@@ -7,26 +7,50 @@ import {
   Select,
   MenuItem,
   OutlinedInput,
-  Chip, 
+  Chip,
 } from "@mui/material";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import "../Styles/quill-better-table.css"
+import QuillTableBetter from "quill-table-better";
 import FileUpload from "../Components/FileUpload";
-import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm"; 
+import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm";
+
+Quill.register(
+  {
+    "modules/better-table": QuillTableBetter,
+  },
+  true
+);
 
 const quillModules = {
-    toolbar: [
-        [{ header: "1" }, { header: "2" }, { font: [] }],
-        ["bold", "italic", "underline", "strike", "blockquote"],
-        [
-            { list: "ordered" },
-            { list: "bullet" },
-            { indent: "-1" },
-            { indent: "+1" },
-        ],
-        ["link", "image", "video"],
-        ["clean"],
+  toolbar: {
+    container: [
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image", "video"],
+      ["insertTable"],
+      ["clean"],
     ],
+  },
+  "better-table": {
+    operationMenu: {
+      items: {
+        unmergeCells: {
+          text: "Unmerge cells",
+        },
+      },
+    },
+  },
+  keyboard: {
+    bindings: QuillTableBetter.keyboardBindings,
+  },
 };
 
 const AnnouncementContentStep = () => {
@@ -38,12 +62,29 @@ const AnnouncementContentStep = () => {
     handleRemoveFile,
   } = useAnnouncementForm();
 
+  const quillRef = useRef<ReactQuill>(null);
+
+  useEffect(() => {
+    const quill = quillRef.current?.getEditor();
+    if (!quill) return;
+
+    const toolbar = quill.getModule("toolbar");
+    if (toolbar) {
+      toolbar.addHandler("insertTable", () => {
+        const betterTable = quill.getModule("better-table");
+        if (betterTable) {
+          betterTable.insertTable(3, 3); 
+        }
+      });
+    }
+  }, []);
+
   const availableTags = ["Urgent", "Important", "Update", "Event"];
 
   return (
     <Box component="form" noValidate autoComplete="off">
-       {/* Post Title */}
-       <Box sx={{ mb: 3 }}>
+      {/* Post Title */}
+      <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Post Title
         </Typography>
@@ -110,6 +151,7 @@ const AnnouncementContentStep = () => {
           }}
         >
           <ReactQuill
+            ref={quillRef}
             theme="snow"
             value={formData.details}
             onChange={handleQuillChange}
@@ -129,9 +171,9 @@ const AnnouncementContentStep = () => {
             name="tags"
             value={formData.tags}
             onChange={handleChange}
-            input={<OutlinedInput label="Tags" />} 
+            input={<OutlinedInput label="Tags" />}
             renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                 {selected.map((value) => (
                   <Chip key={value} label={value} />
                 ))}

@@ -1,0 +1,15 @@
+.ql-better-table-wrapper {
+  overflow-x: auto;
+}
+
+.ql-better-table {
+  border-collapse: collapse;
+}
+
+.ql-better-table td,
+.ql-better-table th {
+  border: 1px solid #ccc;
+  padding: 4px;
+  min-width: 80px;
+  text-align: center;
+}
