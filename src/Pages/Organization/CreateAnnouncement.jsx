@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Button,
   Container,
   Stepper,
   Step,
@@ -15,7 +14,9 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AnnouncementContentStep from "../../Components/AnnouncementContentStep";
+import RecipientStep from "../Organization/RecepientStep";
 import { useNavigate } from "react-router-dom";
+import { useAnnouncementForm } from "../../Hooks/UseAnnouncementForm"; // 🔥 pastikan path-nya sesuai
 
 const steps = ["Contents", "Recipient", "Schedule"];
 
@@ -23,7 +24,15 @@ const CreateAnnouncement = () => {
   const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
 
+  // 👉 Gunakan form hook hanya sekali di level ini
+  const formHook = useAnnouncementForm();
+
   const handleNavigateBack = () => {
+    // 🚀 Simpan data sebelum keluar dari halaman
+    localStorage.setItem(
+      "announcementFormData",
+      JSON.stringify(formHook.formData)
+    );
     navigate("/announcement");
   };
 
@@ -33,20 +42,28 @@ const CreateAnnouncement = () => {
     navigate("/announcement/preview");
   };
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  const handleNext = () => setActiveStep((prev) => prev + 1);
+  const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const getStepContent = (step) => {
     switch (step) {
       case 0:
-        return <AnnouncementContentStep />;
+        return (
+          <AnnouncementContentStep
+            {...formHook} // ✅ kirim semua state & handler dari useAnnouncementForm
+            onNext={handleNext}
+            onPreview={handlePreview}
+          />
+        );
       case 1:
-        return <Typography>Recipient selection form goes here.</Typography>;
+        return (
+          <RecipientStep
+            {...formHook} // ✅ kirim juga agar tetap bisa akses formData
+            onPrevious={handleBack}
+            onNext={handleNext}
+            onPreview={handlePreview}
+          />
+        );
       case 2:
         return <Typography>Scheduling options go here.</Typography>;
       default:
@@ -56,7 +73,6 @@ const CreateAnnouncement = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Header dan Breadcrumbs */}
       <Stack spacing={1} mb={4}>
         <Breadcrumbs
           separator={<NavigateNextIcon fontSize="small" />}
@@ -90,28 +106,8 @@ const CreateAnnouncement = () => {
         ))}
       </Stepper>
 
-      {/* Konten Form Sesuai Step */}
+      {/* Konten Form */}
       <Box>{getStepContent(activeStep)}</Box>
-
-      {/* Tombol Aksi */}
-      <Stack
-        direction="row"
-        justifyContent="flex-end"
-        spacing={2}
-        sx={{ mt: 4 }}
-      >
-        {activeStep !== 0 && (
-          <Button variant="outlined" onClick={handleBack}>
-            Back
-          </Button>
-        )}
-        <Button variant="outlined" color="secondary" onClick={handlePreview}>
-          Preview
-        </Button>
-        <Button variant="contained" onClick={handleNext}>
-          {activeStep === steps.length - 1 ? "Publish" : "Next"}
-        </Button>
-      </Stack>
     </Container>
   );
 };

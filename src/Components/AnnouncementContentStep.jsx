@@ -9,6 +9,8 @@ import {
   OutlinedInput,
   Chip,
   InputLabel,
+  Button,
+  Stack,
 } from "@mui/material";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -17,12 +19,7 @@ import QuillTableBetter from "quill-table-better";
 import FileUpload from "../Components/FileUpload";
 import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm";
 
-Quill.register(
-  {
-    "modules/better-table": QuillTableBetter,
-  },
-  true
-);
+Quill.register({ "modules/better-table": QuillTableBetter }, true);
 
 const quillModules = {
   toolbar: {
@@ -30,7 +27,7 @@ const quillModules = {
       [{ header: "1" }, { header: "2" }, { font: [] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
       [
-        { list: "ordered" },  
+        { list: "ordered" },
         { list: "bullet" },
         { indent: "-1" },
         { indent: "+1" },
@@ -43,9 +40,7 @@ const quillModules = {
   "better-table": {
     operationMenu: {
       items: {
-        unmergeCells: {
-          text: "Unmerge cells",
-        },
+        unmergeCells: { text: "Unmerge cells" },
       },
     },
   },
@@ -54,16 +49,11 @@ const quillModules = {
   },
 };
 
-const AnnouncementContentStep = () => {
-  const {
-    formData,
-    handleChange,
-    handleQuillChange,
-    handleFileDrop,
-    handleRemoveFile,
-  } = useAnnouncementForm();
+const AnnouncementContentStep = ({ onNext, onPreview }) => {
+  const { formData, handleChange, handleQuillChange, handleFileDrop, handleRemoveFile } =
+    useAnnouncementForm();
 
-  const quillRef = useRef(null); 
+  const quillRef = useRef(null);
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -73,9 +63,7 @@ const AnnouncementContentStep = () => {
     if (toolbar) {
       toolbar.addHandler("insertTable", () => {
         const betterTable = quill.getModule("better-table");
-        if (betterTable) {
-          betterTable.insertTable(3, 3);
-        }
+        if (betterTable) betterTable.insertTable(3, 3);
       });
     }
   }, []);
@@ -106,7 +94,7 @@ const AnnouncementContentStep = () => {
         <TextField
           fullWidth
           name="description"
-          placeholder="Iklan"
+          placeholder="Deskripsi pengumuman..."
           value={formData.description}
           onChange={handleChange}
           multiline
@@ -114,7 +102,7 @@ const AnnouncementContentStep = () => {
         />
       </Box>
 
-      {/* Announcement Covers */}
+      {/* File Uploads */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Announcement Covers
@@ -126,7 +114,6 @@ const AnnouncementContentStep = () => {
         />
       </Box>
 
-      {/* Page Cover */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Page Cover
@@ -161,6 +148,7 @@ const AnnouncementContentStep = () => {
         </Box>
       </Box>
 
+      {/* Tags */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Tags
@@ -180,11 +168,15 @@ const AnnouncementContentStep = () => {
                   <Chip
                     key={value}
                     label={value}
-                    onDelete={() => {
-                      const newTags = formData.tags.filter((tag) => tag !== value);
-                      handleChange({ target: { name: 'tags', value: newTags } });
-                    }}
-                    onMouseDown={(event) => event.stopPropagation()}
+                    onDelete={() =>
+                      handleChange({
+                        target: {
+                          name: "tags",
+                          value: formData.tags.filter((t) => t !== value),
+                        },
+                      })
+                    }
+                    onMouseDown={(e) => e.stopPropagation()}
                   />
                 ))}
               </Box>
@@ -198,6 +190,16 @@ const AnnouncementContentStep = () => {
           </Select>
         </FormControl>
       </Box>
+
+      {/* Tombol Aksi */}
+      <Stack direction="row" justifyContent="flex-end" spacing={2} mt={4}>
+        <Button variant="outlined" color="secondary" onClick={onPreview}>
+          Preview
+        </Button>
+        <Button variant="contained" onClick={onNext}>
+          Next
+        </Button>
+      </Stack>
     </Box>
   );
 };
