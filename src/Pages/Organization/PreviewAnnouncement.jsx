@@ -96,7 +96,10 @@ const AnnouncementPreview = () => {
         <Button
           variant="contained"
           startIcon={<ArrowBackIcon />}
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            localStorage.setItem("returningFromPreview", "true");
+            navigate(-1);
+          }}
         >
           Back
         </Button>
