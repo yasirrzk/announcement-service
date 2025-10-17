@@ -1,88 +1,108 @@
-// // src/Components/AnnouncementPreview.jsx
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Container,
+  Typography,
+  Avatar,
+  Stack,
+  Chip,
+  Button,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
 
-// import React from 'react';
-// import { Box, Typography, Avatar, Stack, Chip } from '@mui/material';
-// import { Facebook, Instagram, LinkedIn, Share } from '@mui/icons-material';
+const AnnouncementPreview = () => {
+  const [data, setData] = useState(null);
+  const navigate = useNavigate();
 
-// // Komponen untuk merender HTML dari ReactQuill dengan aman
-// const RenderHTML = ({ htmlString }) => {
-//   // PENTING: dangerouslySetInnerHTML bisa berisiko XSS.
-//   // Di aplikasi produksi, selalu sanitize HTML Anda sebelum merendernya.
-//   // Contoh library: DOMPurify (npm install dompurify)
-//   return <div dangerouslySetInnerHTML={{ __html: htmlString }} />;
-// };
+  useEffect(() => {
+    const saved = localStorage.getItem("announcementFormData");
+    if (saved) setData(JSON.parse(saved));
+  }, []);
 
-// const PreviewAnnouncement = ({ data, coverPreview, pageCoverPreview }) => {
-//   const { postTitle, details, tags } = data;
+  if (!data) return <Typography>Loading...</Typography>;
 
-//   const today = new Date();
-//   const formattedDate = today.toLocaleDateString('en-GB', {
-//     day: 'numeric',
-//     month: 'short',
-//     year: 'numeric',
+  return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      {/* Cover */}
+      {data.pageCover && (
+        <Box
+          sx={{
+            borderRadius: 2,
+            overflow: "hidden",
+            mb: 4,
+          }}
+        >
+          <img
+            src={data.pageCover}
+            alt="Page Cover"
+            style={{ width: "100%", height: 300, objectFit: "cover" }}
+          />
+        </Box>
+      )}
 
-//   });
+      {/* Judul */}
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        {data.postTitle}
+      </Typography>
 
-//   return (
-//     <Box sx={{ p: 3, bgcolor: '#fff' }}>
-//       {/* Header dengan Gambar Latar */}
-//       <Box
-//         sx={{
-//           position: 'relative',
-//           height: '300px',
-//           borderRadius: '16px',
-//           overflow: 'hidden',
-//           color: 'white',
-//           display: 'flex',
-//           flexDirection: 'column',
-//           justifyContent: 'flex-end',
-//           p: 4,
-//           backgroundSize: 'cover',
-//           backgroundPosition: 'center',
-//           backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${coverPreview || 'https://source.unsplash.com/random/1600x900'})`, // Gunakan cover preview
-//         }}
-//       >
-//         <Typography variant="h4" fontWeight="bold">
-//           {postTitle || "Judul Pengumuman Anda"}
-//         </Typography>
-//         <Stack direction="row" alignItems="center" justifyContent="space-between" mt={2}>
-//           <Stack direction="row" alignItems="center" spacing={2}>
-//             <Avatar alt="Jhon Doe" />
-//             <Box>
-//               <Typography fontWeight="bold">Jhon Doe</Typography>
-//               <Typography variant="body2">{formattedDate}</Typography>
-//             </Box>
-//           </Stack>
-//           <Stack direction="row" spacing={1}>
-//             <Facebook /> <Instagram /> <LinkedIn /> <Share />
-//           </Stack>
-//         </Stack>
-//       </Box>
+      {/* Avatar + tanggal */}
+      <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+        <Avatar src="/default-avatar.png" />
+        <Box>
+          <Typography variant="body1" fontWeight={600}>
+            Jhone Dae
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            17 Oct 2025
+          </Typography>
+        </Box>
+      </Stack>
 
-//       {/* Konten Utama */}
-//       <Box sx={{ my: 4, lineHeight: '1.7', fontSize: '16px' }}>
-//         {/* Render HTML dari ReactQuill */}
-//         <RenderHTML htmlString={details || "<p>Detail pengumuman Anda akan muncul di sini...</p>"} />
-//       </Box>
-      
-//        {/* Page Cover Image Preview */}
-//       {pageCoverPreview && (
-//         <Box
-//           component="img"
-//           src={pageCoverPreview}
-//           alt="Page Cover Preview"
-//           sx={{ width: '100%', borderRadius: '12px', my: 4 }}
-//         />
-//       )}
+      {/* Deskripsi */}
+      <Typography variant="body1" mb={3}>
+        {data.description}
+      </Typography>
 
-//       {/* Tags */}
-//       <Stack direction="row" spacing={1}>
-//         {(tags && tags.length > 0) ? tags.map((tag) => (
-//           <Chip key={tag} label={tag} />
-//         )) : <Chip label="Rules" />}
-//       </Stack>
-//     </Box>
-//   );
-// };
+      {/* Announcement Cover */}
+      {data.announcementCover && (
+        <Box sx={{ mb: 3 }}>
+          <img
+            src={data.announcementCover}
+            alt="Announcement Cover"
+            style={{ width: "100%", borderRadius: 10 }}
+          />
+        </Box>
+      )}
 
-// export default PreviewAnnouncement;
+      {/* Detail */}
+      <Box
+        sx={{
+          "& img": { maxWidth: "100%" },
+          "& p": { mb: 2 },
+        }}
+        dangerouslySetInnerHTML={{ __html: data.details }}
+      />
+
+      {/* Tags */}
+      <Stack direction="row" spacing={1} mt={3} flexWrap="wrap">
+        {data.tags?.map((tag, i) => (
+          <Chip key={i} label={tag} />
+        ))}
+      </Stack>
+
+      {/* Tombol Back */}
+      <Stack direction="row" justifyContent="flex-end" mt={4}>
+        <Button
+          variant="contained"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </Button>
+      </Stack>
+    </Container>
+  );
+};
+
+export default AnnouncementPreview;

@@ -8,10 +8,11 @@ import {
   MenuItem,
   OutlinedInput,
   Chip,
+  InputLabel,
 } from "@mui/material";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import "../Styles/quill-better-table.css"
+import "../Styles/quill-better-table.css";
 import QuillTableBetter from "quill-table-better";
 import FileUpload from "../Components/FileUpload";
 import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm";
@@ -29,7 +30,7 @@ const quillModules = {
       [{ header: "1" }, { header: "2" }, { font: [] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
       [
-        { list: "ordered" },
+        { list: "ordered" },  
         { list: "bullet" },
         { indent: "-1" },
         { indent: "+1" },
@@ -62,7 +63,7 @@ const AnnouncementContentStep = () => {
     handleRemoveFile,
   } = useAnnouncementForm();
 
-  const quillRef = useRef<ReactQuill>(null);
+  const quillRef = useRef(null); 
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -73,7 +74,7 @@ const AnnouncementContentStep = () => {
       toolbar.addHandler("insertTable", () => {
         const betterTable = quill.getModule("better-table");
         if (betterTable) {
-          betterTable.insertTable(3, 3); 
+          betterTable.insertTable(3, 3);
         }
       });
     }
@@ -160,13 +161,14 @@ const AnnouncementContentStep = () => {
         </Box>
       </Box>
 
-      {/* Tags */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Tags
         </Typography>
         <FormControl fullWidth>
+          <InputLabel id="tags-select-label">Tags</InputLabel>
           <Select
+            labelId="tags-select-label"
             multiple
             name="tags"
             value={formData.tags}
@@ -175,7 +177,15 @@ const AnnouncementContentStep = () => {
             renderValue={(selected) => (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                 {selected.map((value) => (
-                  <Chip key={value} label={value} />
+                  <Chip
+                    key={value}
+                    label={value}
+                    onDelete={() => {
+                      const newTags = formData.tags.filter((tag) => tag !== value);
+                      handleChange({ target: { name: 'tags', value: newTags } });
+                    }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                  />
                 ))}
               </Box>
             )}

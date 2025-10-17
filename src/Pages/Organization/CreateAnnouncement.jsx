@@ -27,6 +27,12 @@ const CreateAnnouncement = () => {
     navigate("/announcement");
   };
 
+  const handlePreview = () => {
+    const data = JSON.parse(localStorage.getItem("announcementFormData"));
+    localStorage.setItem("announcementData", JSON.stringify(data));
+    navigate("/announcement/preview");
+  };
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -67,7 +73,7 @@ const CreateAnnouncement = () => {
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <IconButton onClick={handleNavigateBack} aria-label="go back">
-            <ArrowBackIcon fontSize="large"/>
+            <ArrowBackIcon fontSize="large" />
           </IconButton>
           <Typography variant="h4" fontWeight={700}>
             Create Announcement
@@ -99,7 +105,7 @@ const CreateAnnouncement = () => {
             Back
           </Button>
         )}
-        <Button variant="outlined" color="secondary">
+        <Button variant="outlined" color="secondary" onClick={handlePreview}>
           Preview
         </Button>
         <Button variant="contained" onClick={handleNext}>
