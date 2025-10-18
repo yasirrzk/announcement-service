@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import {
   Box,
   TextField,
@@ -12,48 +12,66 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import ReactQuill, { Quill } from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import "../Styles/quill-better-table.css";
+import ReactQuill, { Quill } from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
+// import "../Styles/quill-better-table.css";
 import QuillTableBetter from "quill-table-better";
+import "quill-table-better/dist/quill-table-better.css";
 import FileUpload from "../Components/FileUpload";
 import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm";
 
-Quill.register({ "modules/better-table": QuillTableBetter }, true);
-
-const quillModules = {
-  toolbar: {
-    container: [
-      [{ header: "1" }, { header: "2" }, { font: [] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
-      [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
-      ],
-      ["link", "image", "video"],
-      ["insertTable"],
-      ["clean"],
-    ],
-  },
-  "better-table": {
-    operationMenu: {
-      items: {
-        unmergeCells: { text: "Unmerge cells" },
-      },
-    },
-  },
-  keyboard: {
-    bindings: QuillTableBetter.keyboardBindings,
-  },
-};
-
+// Quill.register({ "modules/better-table": QuillTableBetter }, true);
+Quill.register({ "modules/table-better": QuillTableBetter }, true);
 const AnnouncementContentStep = ({ onNext, onPreview }) => {
-  const { formData, handleChange, handleQuillChange, handleFileDrop, handleRemoveFile } =
-    useAnnouncementForm();
-
   const quillRef = useRef(null);
+
+  const quillModules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: "1" }, { header: "2" }, { font: [] }],
+          ["bold", "italic", "underline", "strike", "blockquote"],
+          [
+            { list: "ordered" },
+            { list: "bullet" },
+            { indent: "-1" },
+            { indent: "+1" },
+          ],
+          ["link", "image", "video"],
+          // ["insertTable"],
+          ["clean"],
+          ["tableUI"],
+          ["table-better"],
+        ],
+      },
+      table: false,
+      "table-better": {
+        language: "en_US",
+        menus: [
+          "column",
+          "row",
+          "merge",
+          "table",
+          "cell",
+          "wrap",
+          "copy",
+          "delete",
+        ],
+        toolbarTable: true,
+      },
+      keyboard: {
+        bindings: QuillTableBetter.keyboardBindings,
+      },
+    }),
+    []
+  );
+  const {
+    formData,
+    handleChange,
+    handleQuillChange,
+    handleFileDrop,
+    handleRemoveFile,
+  } = useAnnouncementForm();
 
   useEffect(() => {
     const quill = quillRef.current?.getEditor();
@@ -140,7 +158,7 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
         >
           <ReactQuill
             ref={quillRef}
-            theme="snow"
+            theme={"snow"}
             value={formData.details}
             onChange={handleQuillChange}
             modules={quillModules}
