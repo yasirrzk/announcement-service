@@ -2,54 +2,67 @@ import { useState, useEffect } from "react";
 
 export const useAnnouncementForm = () => {
   const [formData, setFormData] = useState({
+    // State lama kamu
     postTitle: "",
     description: "",
     announcementCover: null,
     pageCover: null,
-    details: "", // Awalnya kosong
+    details: "",
     tags: [],
+    // State baru untuk Step 3
+    enableComments: false,
+    isPublished: false,
+    publishStartDate: null, // Pakai null untuk date picker
+    publishEndDate: null,   // Pakai null untuk date picker
   });
-  
-  // 1. Tambah state loading
+
   const [isLoading, setIsLoading] = useState(true);
 
+  // Efek untuk LOAD data (dari chat kita sebelumnya)
   useEffect(() => {
-    // 2. Set loading jadi true (meskipun default-nya sudah true, ini untuk kejelasan)
-    setIsLoading(true); 
+    setIsLoading(true);
     try {
-      const returningFromPreview = localStorage.getItem("returningFromPreview");
-      if (returningFromPreview === "true") {
-        const savedData = localStorage.getItem("announcementFormData");
-        if (savedData) {
-          // 3. Langsung set data yang sudah di-parse
-          const parsedData = JSON.parse(savedData);
-          // Pakai merge untuk jaga-jaga kalau ada key baru di state default
-          setFormData(prev => ({ ...prev, ...parsedData })); 
+      const savedData = localStorage.getItem("announcementFormData");
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        // Penting: parse string tanggal kembali ke obyek Date
+        if (parsedData.publishStartDate) {
+          parsedData.publishStartDate = new Date(parsedData.publishStartDate);
         }
-        localStorage.removeItem("returningFromPreview");
-      } else {
-        localStorage.removeItem("announcementFormData");
+        if (parsedData.publishEndDate) {
+          parsedData.publishEndDate = new Date(parsedData.publishEndDate);
+        }
+        setFormData((prev) => ({ ...prev, ...parsedData }));
       }
     } catch (error) {
-      console.error("Gagal memuat data form:", error);
+      console.error("Gagal memuat data form, data dibersihkan:", error);
       localStorage.removeItem("announcementFormData");
     }
-    
-    // 4. Set loading jadi false SETELAH semua logika selesai
-    setIsLoading(false); 
-  }, []); // Biarkan dependency array kosong, ini hanya jalan sekali saat mount
+    setIsLoading(false);
+  }, []);
 
+  // Efek untuk SIMPAN data (dari chat kita sebelumnya)
   useEffect(() => {
-    // Efek ini tetap jalan untuk menyimpan perubahan, TAPI kita cegah
-    // penyimpanan saat pertama kali load (pas isLoading)
     if (!isLoading) {
       localStorage.setItem("announcementFormData", JSON.stringify(formData));
     }
-  }, [formData, isLoading]); // Tambahkan isLoading sebagai dependency
+  }, [formData, isLoading]);
 
+  // Handler untuk text field/select biasa
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handler BARU untuk Switch (toggle)
+  const handleSwitchChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: checked }));
+  };
+
+  // Handler BARU untuk Date Picker
+  const handleDateChange = (name, newValue) => {
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
   const handleQuillChange = (value) => {
@@ -73,8 +86,10 @@ export const useAnnouncementForm = () => {
 
   return {
     formData,
-    isLoading, // 5. Kembalikan (return) isLoading
+    isLoading,
     handleChange,
+    handleSwitchChange, // <-- Return handler baru
+    handleDateChange, // <-- Return handler baru
     handleQuillChange,
     handleFileDrop,
     handleRemoveFile,
