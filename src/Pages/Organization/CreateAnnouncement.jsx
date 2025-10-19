@@ -16,7 +16,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AnnouncementContentStep from "../../Components/AnnouncementContentStep";
 import RecipientStep from "../Organization/RecepientStep";
 import { useNavigate } from "react-router-dom";
-import { useAnnouncementForm } from "../../Hooks/UseAnnouncementForm"; // 🔥 pastikan path-nya sesuai
+import { useAnnouncementForm } from "../../Hooks/UseAnnouncementForm"; 
 
 const steps = ["Contents", "Recipient", "Schedule"];
 
@@ -24,11 +24,9 @@ const CreateAnnouncement = () => {
   const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
 
-  // 👉 Gunakan form hook hanya sekali di level ini
   const formHook = useAnnouncementForm();
 
   const handleNavigateBack = () => {
-    // 🚀 Simpan data sebelum keluar dari halaman
     localStorage.setItem(
       "announcementFormData",
       JSON.stringify(formHook.formData)
@@ -50,7 +48,7 @@ const CreateAnnouncement = () => {
       case 0:
         return (
           <AnnouncementContentStep
-            {...formHook} // ✅ kirim semua state & handler dari useAnnouncementForm
+            {...formHook} 
             onNext={handleNext}
             onPreview={handlePreview}
           />
@@ -58,7 +56,7 @@ const CreateAnnouncement = () => {
       case 1:
         return (
           <RecipientStep
-            {...formHook} // ✅ kirim juga agar tetap bisa akses formData
+            {...formHook} 
             onPrevious={handleBack}
             onNext={handleNext}
             onPreview={handlePreview}

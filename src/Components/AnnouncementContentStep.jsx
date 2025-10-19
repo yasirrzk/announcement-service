@@ -11,18 +11,26 @@ import {
   InputLabel,
   Button,
   Stack,
+  CircularProgress, // Tetap impor loader
 } from "@mui/material";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
-// import "../Styles/quill-better-table.css";
 import QuillTableBetter from "quill-table-better";
 import "quill-table-better/dist/quill-table-better.css";
 import FileUpload from "../Components/FileUpload";
-import { useAnnouncementForm } from "../Hooks/UseAnnouncementForm";
 
-// Quill.register({ "modules/better-table": QuillTableBetter }, true);
 Quill.register({ "modules/table-better": QuillTableBetter }, true);
-const AnnouncementContentStep = ({ onNext, onPreview }) => {
+
+const AnnouncementContentStep = ({
+  onNext,
+  onPreview,
+  formData,
+  isLoading, 
+  handleChange, 
+  handleQuillChange, 
+  handleFileDrop, 
+  handleRemoveFile, 
+}) => {
   const quillRef = useRef(null);
 
   const quillModules = useMemo(
@@ -38,7 +46,6 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
             { indent: "+1" },
           ],
           ["link", "image", "video"],
-          // ["insertTable"],
           ["clean"],
           ["tableUI"],
           ["table-better"],
@@ -65,15 +72,11 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
     }),
     []
   );
-  const {
-    formData,
-    handleChange,
-    handleQuillChange,
-    handleFileDrop,
-    handleRemoveFile,
-  } = useAnnouncementForm();
+
 
   useEffect(() => {
+    if (isLoading) return;
+
     const quill = quillRef.current?.getEditor();
     if (!quill) return;
 
@@ -84,10 +87,26 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
         if (betterTable) betterTable.insertTable(3, 3);
       });
     }
-  }, []);
+  }, [isLoading]);
 
   const availableTags = ["Urgent", "Important", "Update", "Event"];
 
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: 400,
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  
   return (
     <Box component="form" noValidate autoComplete="off">
       {/* Post Title */}
@@ -100,7 +119,7 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
           name="postTitle"
           placeholder="Iklan"
           value={formData.postTitle}
-          onChange={handleChange}
+          onChange={handleChange} 
         />
       </Box>
 
@@ -114,7 +133,7 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
           name="description"
           placeholder="Deskripsi pengumuman..."
           value={formData.description}
-          onChange={handleChange}
+          onChange={handleChange} 
           multiline
           rows={2}
         />
@@ -126,9 +145,9 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
           Announcement Covers
         </Typography>
         <FileUpload
-          onDrop={(files) => handleFileDrop("announcementCover", files)}
+          onDrop={(files) => handleFileDrop("announcementCover", files)} 
           file={formData.announcementCover}
-          onRemove={() => handleRemoveFile("announcementCover")}
+          onRemove={() => handleRemoveFile("announcementCover")} 
         />
       </Box>
 
@@ -137,9 +156,9 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
           Page Cover
         </Typography>
         <FileUpload
-          onDrop={(files) => handleFileDrop("pageCover", files)}
+          onDrop={(files) => handleFileDrop("pageCover", files)} 
           file={formData.pageCover}
-          onRemove={() => handleRemoveFile("pageCover")}
+          onRemove={() => handleRemoveFile("pageCover")} 
         />
       </Box>
 
@@ -160,7 +179,7 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
             ref={quillRef}
             theme={"snow"}
             value={formData.details}
-            onChange={handleQuillChange}
+            onChange={handleQuillChange} 
             modules={quillModules}
           />
         </Box>
@@ -178,7 +197,7 @@ const AnnouncementContentStep = ({ onNext, onPreview }) => {
             multiple
             name="tags"
             value={formData.tags}
-            onChange={handleChange}
+            onChange={handleChange} // Gunakan props
             input={<OutlinedInput label="Tags" />}
             renderValue={(selected) => (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>

@@ -45,14 +45,12 @@ const FileUpload = ({ onDrop, file, onRemove }) => {
       return;
     }
 
-    // ✅ jika file masih File object (baru diupload)
     if (file instanceof File && file.type.startsWith("image/")) {
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
     }
 
-    // ✅ jika file adalah base64 string (hasil dari localStorage)
     if (typeof file === "string" && file.startsWith("data:image")) {
       setPreview(file);
     } else {
@@ -75,7 +73,7 @@ const FileUpload = ({ onDrop, file, onRemove }) => {
           borderRadius: 2,
           p: 2,
           textAlign: "center",
-          backgroundColor: isDragActive ? "rgba(14, 165, 233, 0.08)" : "#F7FAFC",
+          backgroundColor: isDragActive ? "rgba(14, 165, 233, 0.08)" : "rgba(14, 165, 233, 0.08)",
           cursor: "pointer",
           transition: "all 0.2s ease-in-out",
           "&:hover": { borderColor: "primary.main" },
