@@ -15,7 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AnnouncementContentStep from "../../Components/AnnouncementContentStep";
 import RecipientStep from "../Organization/RecepientStep";
-import ScheduleStep from "./ScheduleStep"; // <-- 1. Impor komponen baru
+import ScheduleStep from "./ScheduleStep"; 
 import { useNavigate } from "react-router-dom";
 import { useAnnouncementForm } from "../../Hooks/UseAnnouncementForm";
 
@@ -28,7 +28,6 @@ const CreateAnnouncement = () => {
   const formHook = useAnnouncementForm();
 
   const handleNavigateBack = () => {
-    // Logic ini mungkin sudah di-handle oleh hook, tapi oke
     localStorage.setItem(
       "announcementFormData",
       JSON.stringify(formHook.formData)
@@ -37,25 +36,20 @@ const CreateAnnouncement = () => {
   };
 
   const handlePreview = () => {
-    // Hati-hati, formHook.formData mungkin belum yang terbaru
-    // Ambil langsung dari localStorage lebih aman
-    const data = JSON.parse(localStorage.getItem("announcementFormData"));
-    localStorage.setItem("announcementData", JSON.stringify(data));
-    navigate("/announcement/preview");
-  };
+  localStorage.setItem("announcementFormData", JSON.stringify(formHook.formData));
+  localStorage.setItem("returningFromPreview", "true"); 
+  navigate("/announcement/preview");
+};
+
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
-  // 2. Buat fungsi untuk submit
   const handleSubmit = () => {
     console.log("FORM DATA LENGKAP:", formHook.formData);
-    // Di sini kamu bisa kirim data (formHook.formData) ke API
     
-    // Setelah sukses, hapus draft dari localStorage
     localStorage.removeItem("announcementFormData");
     
-    // Pindahkan ke halaman sukses/dashboard
     alert("Announcement Created!");
     navigate("/announcement");
   };
