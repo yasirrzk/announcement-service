@@ -20,30 +20,37 @@ import {
 
 const AnnouncementPage = () => {
   const [filter, setFilter] = useState("All");
-  const [stats, setStats] = useState([]);
+  const [stats, setStats] = useState({
+  totalAnnouncement: 0,
+  totalPublished: 0,
+  totalDraft: 0,
+  totalUnpublished: 0
+});
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
+  const fetchData = async () => {
+    try {
+      setLoading(true);
 
-        const statsData = await getAnnouncementStats();
-        setStats(statsData);
+      const statsData = await getAnnouncementStats();
+      console.log("📊 Stats response:", statsData);
+      setStats(statsData.data || {});
 
-        let statusParam = filter === "All" ? "" : filter.toLowerCase();
-        const announcementsData = await getAnnouncements(statusParam);
-        setAnnouncements(announcementsData);
-      } catch (err) {
-        console.error("❌ Error fetching announcements:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      let statusParam = filter === "All" ? "" : filter.toLowerCase();
+      const announcementsData = await getAnnouncements(statusParam);
+      setAnnouncements(announcementsData);
+    } catch (err) {
+      console.error("❌ Error fetching announcements:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [filter]);
+  fetchData();
+}, [filter]);
+
 
 
   if (loading) {
@@ -71,20 +78,9 @@ const AnnouncementPage = () => {
 
       {/* Stats */}
       <Grid container spacing={3}>
-        {stats && stats.length > 0 ? (
-          stats.map((stat, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <StatCard
-                icon={stat.icon}
-                title={stat.title || stat.status}
-                count={stat.count || stat.total}
-                color={stat.color || "primary"}
-              />
-            </Grid>
-          ))
-        ) : (
-          <Typography>No stats available</Typography>
-        )}
+        <Grid item xs={12} sm={6} md={3}>
+          <StatCard/>
+        </Grid>
       </Grid>
 
       {/* Filter & Action */}

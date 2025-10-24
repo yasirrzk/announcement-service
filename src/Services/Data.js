@@ -10,6 +10,7 @@ const api = axios.create({
   headers: {
     Authorization: `Bearer ${TOKEN}`,
     "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "true",
   },
 });
 
@@ -26,23 +27,35 @@ api.interceptors.response.use(
 export const getAnnouncementStats = async () => {
   try {
     const res = await api.get("/api/announcements/stats");
-    return res.data.data;
+    console.log("🔹 API Response:", res.data); 
+    return res.data; 
   } catch (error) {
+    console.error("❌ getAnnouncementStats error:", error);
     throw error;
   }
 };
 
 // ========== ANNOUNCEMENTS ==========
-export const getAnnouncements = async (status = "draft", page = 1, limit = 6) => {
+export const getAnnouncements = async (status = "", page = 1, limit = 6) => {
   try {
-    const res = await api.get(`/api/announcements`, {
-      params: { status, page, limit }
+    const res = await api.get("/api/announcements", {
+      params: { status, page, limit },
     });
-    return res.data.data;
+
+    console.log("📦 Raw response:", res.data);
+
+    // Karena struktur JSON kamu:
+    // { data: { data: [ ... ], meta: { ... } } }
+    const data = res.data?.data?.data || [];
+
+    console.log("✅ Parsed data (array):", data);
+    return data;
   } catch (error) {
-    throw error;
+    console.error("❌ Error fetching announcements:", error);
+    return [];
   }
 };
+
 
 export const getAnnouncementById = async (id) => {
   try {
