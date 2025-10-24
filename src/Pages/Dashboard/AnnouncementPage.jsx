@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -8,28 +7,52 @@ import {
   Button,
   ButtonGroup,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import StatCard from "../../Components/StatCard";
-import { stats, announcements } from "../../Services/Data"; 
 import AnnouncementCard from "../../Components/AnnouncementCard";
 import { useNavigate } from "react-router-dom";
+import {
+  getAnnouncementStats,
+  getAnnouncements,
+} from "../../Services/Data";
 
 const AnnouncementPage = () => {
   const [filter, setFilter] = useState("All");
-const navigate = useNavigate();
-  const handleFilterChange = (event, newFilter) => {
-    if (newFilter !== null) {
-      setFilter(newFilter);
-    }
-  };
+  const [stats, setStats] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-  const filteredAnnouncements = announcements.filter((ann) => {
-    if (filter === "All") {
-      return true;
-    }
-    return ann.status === filter;
-  });
+        const statsData = await getAnnouncementStats();
+        setStats(statsData);
+
+        let statusParam = filter === "All" ? "" : filter.toLowerCase();
+        const announcementsData = await getAnnouncements(statusParam);
+        setAnnouncements(announcementsData);
+      } catch (err) {
+        console.error("❌ Error fetching announcements:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [filter]);
+
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Container
@@ -37,32 +60,70 @@ const navigate = useNavigate();
       sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 4, pb: 5 }}
     >
       {/* Header */}
-      <Typography variant="h5" component="h1" fontWeight="bold" textAlign="start">
+      <Typography
+        variant="h5"
+        component="h1"
+        fontWeight="bold"
+        textAlign="start"
+      >
         Announcement
       </Typography>
 
       {/* Stats */}
       <Grid container spacing={3}>
-        {stats.map((stat) => (
-          <Grid item size={3} key={stat.title}>
-            <StatCard icon={stat.icon} title={stat.title} count={stat.count} color={stat.color} />
-          </Grid>
-        ))}
+        {stats && stats.length > 0 ? (
+          stats.map((stat, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <StatCard
+                icon={stat.icon}
+                title={stat.title || stat.status}
+                count={stat.count || stat.total}
+                color={stat.color || "primary"}
+              />
+            </Grid>
+          ))
+        ) : (
+          <Typography>No stats available</Typography>
+        )}
       </Grid>
 
       {/* Filter & Action */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2}>
-        <ButtonGroup variant="outlined" aria-label="filter buttons" sx={{ "& .MuiButton-root": { textTransform: "none", borderRadius: "8px" } }}>
-          <Button variant={filter === 'All' ? 'contained' : 'outlined'} onClick={() => setFilter('All')}>All</Button>
-          <Button variant={filter === 'Published' ? 'contained' : 'outlined'} onClick={() => setFilter('Published')}>Published</Button>
-          <Button variant={filter === 'Draft' ? 'contained' : 'outlined'} onClick={() => setFilter('Draft')}>Draft</Button>
-          <Button variant={filter === 'Unpublished' ? 'contained' : 'outlined'} onClick={() => setFilter('Unpublished')}>Unpublished</Button>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        flexWrap="wrap"
+        gap={2}
+      >
+        <ButtonGroup
+          variant="outlined"
+          aria-label="filter buttons"
+          sx={{
+            "& .MuiButton-root": { textTransform: "none", borderRadius: "8px" },
+          }}
+        >
+          {["All", "Published", "Draft", "Unpublished"].map((item) => (
+            <Button
+              key={item}
+              variant={filter === item ? "contained" : "outlined"}
+              onClick={() => setFilter(item)}
+            >
+              {item}
+            </Button>
+          ))}
         </ButtonGroup>
 
         <IconButton
           color="primary"
           aria-label="Tambah pengumuman baru"
-          sx={{ bgcolor: "primary.main", color: "white", borderRadius: "10px", width: 40, height: 40, "&:hover": { bgcolor: "primary.dark" } }}
+          sx={{
+            bgcolor: "primary.main",
+            color: "white",
+            borderRadius: "10px",
+            width: 40,
+            height: 40,
+            "&:hover": { bgcolor: "primary.dark" },
+          }}
           onClick={() => navigate("/organization/create-announcement")}
         >
           <AddIcon />
@@ -71,11 +132,15 @@ const navigate = useNavigate();
 
       {/* Announcements List */}
       <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
-        {filteredAnnouncements.map((announcement) => (
-          <Grid item key={announcement.id} size={4} sx={{ display: "flex" }}>
-            <AnnouncementCard announcement={announcement} />
-          </Grid>
-        ))}
+        {announcements && announcements.length > 0 ? (
+          announcements.map((announcement) => (
+            <Grid item key={announcement.id} xs={12} sm={6} md={4} sx={{ display: "flex" }}>
+              <AnnouncementCard announcement={announcement} />
+            </Grid>
+          ))
+        ) : (
+          <Typography>No announcements found</Typography>
+        )}
       </Grid>
     </Container>
   );

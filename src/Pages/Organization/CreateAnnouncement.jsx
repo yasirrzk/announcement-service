@@ -70,16 +70,15 @@ const CreateAnnouncement = () => {
             {...formHook}
             onPrevious={handleBack}
             onNext={handleNext}
-            onPreview={handlePreview} // Prop ini mungkin tidak terpakai di RecipientStep
+            onPreview={handlePreview} 
           />
         );
-      // 3. Tambahkan case 2
       case 2:
         return (
           <ScheduleStep
             {...formHook}
             onPrevious={handleBack}
-            onSubmit={handleSubmit} // Pass fungsi submit
+            onSubmit={handleSubmit} 
           />
         );
       default:
