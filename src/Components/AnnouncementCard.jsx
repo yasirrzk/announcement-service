@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Grid,
+  Typography,
   Card,
   CardContent,
   CardMedia,
-  Typography,
   Box,
   Chip,
   CardActions,
@@ -16,6 +17,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ShareIcon from "@mui/icons-material/Share";
+import { getAnnouncements } from "../Services/Data"; // pastikan path benar
 
 // Warna status sesuai backend
 const statusColors = {
@@ -24,33 +26,73 @@ const statusColors = {
   unpublished: "error",
 };
 
-const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
-  // ✅ Struktur data sesuai backend API
+// 🔹 Komponen utama: fetch data & tampilkan list of cards
+const AnnouncementCard = () => {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      setLoading(true);
+      try {
+        const res = await getAnnouncements();
+        console.log("📢 Data dari API:", res);
+        setAnnouncements(res);
+      } catch (err) {
+        console.error("❌ Gagal memuat data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnnouncements();
+  }, []);
+
+  if (loading) return <Typography>Loading announcements...</Typography>;
+  if (!announcements || announcements.length === 0)
+    return <Typography>Tidak ada pengumuman ditemukan.</Typography>;
+
+  return (
+    <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
+      {announcements.map((announcement) => (
+        <Grid
+          item
+          key={announcement.id}
+          xs={12}
+          sm={6}
+          md={4}
+          sx={{ display: "flex" }}
+        >
+          <SingleAnnouncementCard announcement={announcement} />
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+// 🔹 Komponen tunggal untuk setiap card
+const SingleAnnouncementCard = ({ announcement }) => {
   const {
-    id,
     title,
     description,
-    announcement_cover_url, // dari backend
-    page_cover_url,
+    announcement_cover_url,
     status,
     views_count,
     likes_count,
     comments_count,
     shares_count,
     created_at,
-    updated_at,
     publish_date,
+    employees,
+    announcement_tags,
     enable_comments,
-    employees, // data pembuat announcement
-    announcement_tags, // array tags
-    announcement_recipients, // array recipients
   } = announcement;
 
-  // 🔧 Fallback untuk image kalau belum ada
   const defaultImage =
     "https://via.placeholder.com/400x200.png?text=No+Image+Available";
 
-  // Format tanggal
+  const handleImageError = (e) => (e.target.src = defaultImage);
+
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     return new Date(dateString).toLocaleDateString("id-ID", {
@@ -58,11 +100,6 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
       month: "short",
       year: "numeric",
     });
-  };
-
-  // Handle image error
-  const handleImageError = (e) => {
-    e.target.src = defaultImage;
   };
 
   return (
@@ -82,23 +119,17 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
         flexDirection: "column",
         height: "100%",
       }}
-      onClick={() => onCardClick?.(announcement)}
     >
-      {/* Gambar pengumuman */}
+      {/* Gambar */}
       <CardMedia
         component="img"
         height="160"
         image={announcement_cover_url || defaultImage}
         alt={title}
         onError={handleImageError}
-        sx={{
-          objectFit: "cover",
-        }}
       />
 
-      {/* Isi Card */}
       <CardContent sx={{ flexGrow: 1, pb: 1 }}>
-        {/* Header: Status & Tanggal */}
         <Box
           display="flex"
           justifyContent="space-between"
@@ -120,7 +151,6 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
           </Typography>
         </Box>
 
-        {/* Title */}
         <Typography
           gutterBottom
           variant="subtitle1"
@@ -137,7 +167,6 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
           {title}
         </Typography>
 
-        {/* Description */}
         <Typography
           variant="body2"
           color="text.secondary"
@@ -153,7 +182,6 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
           {description}
         </Typography>
 
-        {/* Author Info */}
         {employees && (
           <Box display="flex" alignItems="center" mb={1}>
             <Avatar
@@ -164,17 +192,16 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
               {employees.full_name?.charAt(0)}
             </Avatar>
             <Box>
-              <Typography variant="body2" fontWeight="medium" sx={{ lineHeight: 1.2 }}>
+              <Typography variant="body2" fontWeight="medium">
                 {employees.full_name}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1 }}>
+              <Typography variant="caption" color="text.secondary">
                 {employees.position}
               </Typography>
             </Box>
           </Box>
         )}
 
-        {/* Tags */}
         {announcement_tags && announcement_tags.length > 0 && (
           <Box display="flex" gap={0.5} flexWrap="wrap" mb={1}>
             {announcement_tags.slice(0, 3).map((tag) => (
@@ -186,25 +213,15 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
                 sx={{ fontSize: "0.65rem", height: 20 }}
               />
             ))}
-            {announcement_tags.length > 3 && (
-              <Chip
-                label={`+${announcement_tags.length - 3}`}
-                size="small"
-                variant="outlined"
-                sx={{ fontSize: "0.65rem", height: 20 }}
-              />
-            )}
           </Box>
         )}
 
-        {/* Publish Date (jika ada) */}
         {publish_date && status === "published" && (
           <Typography variant="caption" color="primary" display="block" mb={0.5}>
             📅 Published: {formatDate(publish_date)}
           </Typography>
         )}
 
-        {/* Comments Status */}
         {enable_comments && (
           <Typography variant="caption" color="text.secondary" display="block">
             💬 Comments enabled
@@ -212,7 +229,6 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
         )}
       </CardContent>
 
-      {/* Footer Card - Stats & Actions */}
       <CardActions
         sx={{
           mt: "auto",
@@ -222,44 +238,29 @@ const AnnouncementCard = ({ announcement, onMenuClick, onCardClick }) => {
           pt: 0,
         }}
       >
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMenuClick?.(announcement);
-          }}
-        >
+        <IconButton size="small">
           <MoreHorizIcon fontSize="small" />
         </IconButton>
 
         <Stack direction="row" spacing={1.5} alignItems="center">
-          {/* Views */}
           <Stack direction="row" spacing={0.3} alignItems="center">
             <VisibilityIcon sx={{ fontSize: 16, color: "text.secondary" }} />
             <Typography variant="caption" fontWeight="medium">
               {views_count ?? 0}
             </Typography>
           </Stack>
-
-          {/* Likes */}
           <Stack direction="row" spacing={0.3} alignItems="center">
             <FavoriteIcon sx={{ fontSize: 16, color: "text.secondary" }} />
             <Typography variant="caption" fontWeight="medium">
               {likes_count ?? 0}
             </Typography>
           </Stack>
-
-          {/* Comments */}
           <Stack direction="row" spacing={0.3} alignItems="center">
-            <ChatBubbleOutlineIcon
-              sx={{ fontSize: 16, color: "text.secondary" }}
-            />
+            <ChatBubbleOutlineIcon sx={{ fontSize: 16, color: "text.secondary" }} />
             <Typography variant="caption" fontWeight="medium">
               {comments_count ?? 0}
             </Typography>
           </Stack>
-
-          {/* Shares */}
           <Stack direction="row" spacing={0.3} alignItems="center">
             <ShareIcon sx={{ fontSize: 16, color: "text.secondary" }} />
             <Typography variant="caption" fontWeight="medium">
