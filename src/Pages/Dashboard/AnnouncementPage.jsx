@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -8,54 +9,55 @@ import {
   ButtonGroup,
   IconButton,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import StatCard from "../../Components/StatCard";
 import AnnouncementCard from "../../Components/AnnouncementCard";
 import { useNavigate } from "react-router-dom";
-import {
-  getAnnouncementStats,
-  getAnnouncements,
-} from "../../Services/Data";
+import { getAnnouncementStats, getAnnouncements } from "../../Services/Data";
 
 const AnnouncementPage = () => {
   const [filter, setFilter] = useState("All");
   const [stats, setStats] = useState({
-  totalAnnouncement: 0,
-  totalPublished: 0,
-  totalDraft: 0,
-  totalUnpublished: 0
-});
+    totalAnnouncement: 0,
+    totalPublished: 0,
+    totalDraft: 0,
+    totalUnpublished: 0,
+  });
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
 
-      const statsData = await getAnnouncementStats();
-      console.log("📊 Stats response:", statsData);
-      setStats(statsData.data || {});
+        const statsData = await getAnnouncementStats();
+        console.log("📊 Stats response:", statsData);
+        setStats(statsData.data || {});
 
-      let statusParam = filter === "All" ? "" : filter.toLowerCase();
-      const announcementsData = await getAnnouncements(statusParam);
-      setAnnouncements(announcementsData);
-    } catch (err) {
-      console.error("❌ Error fetching announcements:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+        let statusParam = filter === "All" ? "" : filter.toLowerCase();
+        const announcementsData = await getAnnouncements(statusParam);
+        setAnnouncements(announcementsData);
+      } catch (err) {
+        console.error("❌ Error fetching announcements:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchData();
-}, [filter]);
-
-
+    fetchData();
+  }, [filter]);
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="80vh"
+      >
         <CircularProgress />
       </Box>
     );
@@ -78,8 +80,8 @@ const AnnouncementPage = () => {
 
       {/* Stats */}
       <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard/>
+        <Grid item xs={12} sm={6} md={3} sx={{ width: "100%" }}>
+          <StatCard />
         </Grid>
       </Grid>
 
@@ -91,23 +93,32 @@ const AnnouncementPage = () => {
         flexWrap="wrap"
         gap={2}
       >
-        <ButtonGroup
+        {/* <ButtonGroup
           variant="outlined"
           aria-label="filter buttons"
           sx={{
-            "& .MuiButton-root": { textTransform: "none", borderRadius: "8px" },
+            "& .MuiButton-root": {
+              textTransform: "none",
+              borderRadius: "8px",
+            },
           }}
-        >
+        > */}
+        <Stack direction="row" spacing={1}>
           {["All", "Published", "Draft", "Unpublished"].map((item) => (
             <Button
               key={item}
               variant={filter === item ? "contained" : "outlined"}
               onClick={() => setFilter(item)}
+              sx={{
+                textTransform: "none",
+                borderRadius: "6px",
+              }}
             >
               {item}
             </Button>
           ))}
-        </ButtonGroup>
+        </Stack>
+        {/* </ButtonGroup> */}
 
         <IconButton
           color="primary"
@@ -130,7 +141,14 @@ const AnnouncementPage = () => {
       <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
         {announcements && announcements.length > 0 ? (
           announcements.map((announcement) => (
-            <Grid item key={announcement.id} xs={12} sm={6} md={4} sx={{ display: "flex" }}>
+            <Grid
+              item
+              key={announcement.id}
+              xs={12}
+              sm={6}
+              md={4}
+              sx={{ display: "flex" }}
+            >
               <AnnouncementCard announcement={announcement} />
             </Grid>
           ))
