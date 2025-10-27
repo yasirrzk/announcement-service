@@ -3,7 +3,7 @@ export const announcementData = {
   title: "Pemberitahuan Penting: Penyesuaian Aturan dan Kebijakan Kerja PT ABC Efektif 1 November 2025",
   author: "Jhon Doe",
   date: "12 Agustus 2025, 10:00 PM",
-  headerImage: "/images/hero-banner.jpg",
+  headerImage: "/src/assets/image.png",
   content: `
 PT ABC mengumumkan penyesuaian signifikan terhadap beberapa aturan dan kebijakan kantor yang akan mulai berlaku efektif pada 1 November 2025. Perubahan ini merupakan bagian dari upaya berkelanjutan perusahaan untuk meningkatkan efisiensi operasional, menjaga keseimbangan kerja dan kehidupan, serta menciptakan lingkungan kerja yang lebih produktif dan adaptif.
   `,
