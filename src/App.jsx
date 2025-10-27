@@ -6,6 +6,7 @@ import Navbar from "./Layout/Navbar";
 import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import PreviewAnnouncement from "./Pages/Organization/PreviewAnnouncement";
+import AnnouncementDetail from "./Pages/Dashboard/AnnouncementDetail";
 
 const theme = createTheme({
   palette: {
@@ -59,6 +60,7 @@ function App() {
             <Routes>
               <Route path="/" element={<AnnouncementPage />} />
               <Route path="/announcement" element={<AnnouncementPage />} />
+              <Route path="/announcement/:id" element={<AnnouncementDetail />} />
               <Route path="/organization/create-announcement" element={<CreateAnnouncement />} />
               <Route path="/announcement/preview" element={<PreviewAnnouncement/>} />
             </Routes>
