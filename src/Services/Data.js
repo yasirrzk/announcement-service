@@ -4,7 +4,6 @@ const API_BASE_URL = "https://phototypically-unexcluding-roland.ngrok-free.dev";
 const TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MjExN2RjLTE2MDgtNDQ4OS1hM2ZkLWRlMGNlZWY3ZjNmYSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJlbXBsb3llZU51bWJlciI6IkVNUDAwMSIsImlhdCI6MTc2MTIwMTkzMSwiZXhwIjoxNzYxODA2NzMxfQ.bzLDTqMZ3VH9E0znVghfECmYXdX24WubfKm5960qJd8";
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -14,7 +13,6 @@ const api = axios.create({
   },
 });
 
-// Response interceptor untuk error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -44,8 +42,6 @@ export const getAnnouncements = async (status = "", page = 1, limit = 6) => {
 
     console.log("📦 Raw response:", res.data);
 
-    // Karena struktur JSON kamu:
-    // { data: { data: [ ... ], meta: { ... } } }
     const data = res.data?.data?.data || [];
 
     console.log("✅ Parsed data (array):", data);
@@ -105,7 +101,6 @@ export const getDepartments = async () => {
 
 // ========== STEP-BY-STEP FUNCTIONS ==========
 
-// Step 1: Create announcement with basic info
 export const createAnnouncementStep1 = async ({
   title,
   description,
@@ -135,7 +130,6 @@ export const createAnnouncementStep1 = async ({
 // Step 2: Update recipients
 export const updateRecipientsStep2 = async (announcementId, recipients) => {
   try {
-    // Format: [{ type: "Engineering", id: "607f5fee-..." }, ...]
     const payload = { recipients };
     const res = await api.put(`/api/announcements/${announcementId}`, payload);
     return res.data.data;
@@ -165,7 +159,6 @@ export const updateScheduleStep3 = async (announcementId, {
 
 // ========== HELPER FUNCTIONS ==========
 
-// Complete flow untuk membuat announcement
 export const createCompleteAnnouncement = async ({
   // Step 1 data
   title,

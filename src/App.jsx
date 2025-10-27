@@ -63,6 +63,7 @@ function App() {
               <Route path="/announcement/:id" element={<AnnouncementDetail />} />
               <Route path="/organization/create-announcement" element={<CreateAnnouncement />} />
               <Route path="/announcement/preview" element={<PreviewAnnouncement/>} />
+              <Route path="/announcement/:id" element={<AnnouncementDetail/>}/>
             </Routes>
           </Box>
         </Box>

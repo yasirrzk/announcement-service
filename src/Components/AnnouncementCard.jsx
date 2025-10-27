@@ -17,16 +17,14 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ShareIcon from "@mui/icons-material/Share";
-import { getAnnouncements } from "../Services/Data"; // pastikan path benar
+import { getAnnouncements } from "../Services/Data"; 
 
-// Warna status sesuai backend
 const statusColors = {
   published: "success",
   draft: "warning",
   unpublished: "error",
 };
 
-// 🔹 Komponen utama: fetch data & tampilkan list of cards
 const AnnouncementCard = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);

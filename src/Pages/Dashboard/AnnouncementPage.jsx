@@ -148,6 +148,7 @@ const AnnouncementPage = () => {
               sm={6}
               md={4}
               sx={{ display: "flex" }}
+              onClick={() => navigate(`/announcement/${announcement.id}`)}
             >
               <AnnouncementCard announcement={announcement} />
             </Grid>
