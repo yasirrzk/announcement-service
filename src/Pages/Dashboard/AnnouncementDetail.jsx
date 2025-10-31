@@ -1,6 +1,22 @@
 import React from "react";
 import { announcementData } from "./data";
-import { Avatar, Box, Button, Chip, Container, Divider, List, ListItem, ListItemText, Stack, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  Container,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  TextField,
+  Typography,
+  IconButton,
+} from "@mui/material";
+
+const handleBack = () => setActiveStep((prev) => prev - 1);
 
 const AnnouncementHeader = ({ title, author, date, image }) => {
   return (

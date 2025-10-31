@@ -1,8 +1,9 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://phototypically-unexcluding-roland.ngrok-free.dev";
+const API_BASE_URL =
+  "https://phototypically-unexcluding-roland.ngrok-free.dev/";
 const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MjExN2RjLTE2MDgtNDQ4OS1hM2ZkLWRlMGNlZWY3ZjNmYSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJlbXBsb3llZU51bWJlciI6IkVNUDAwMSIsImlhdCI6MTc2MTIwMTkzMSwiZXhwIjoxNzYxODA2NzMxfQ.bzLDTqMZ3VH9E0znVghfECmYXdX24WubfKm5960qJd8";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlYzFlZGYxLTMyMTItNDAyZi1iNzgzLWU5ZjU4YTYwYTM2OSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJuaWsiOiIxMjMyMzQiLCJpYXQiOjE3NjE3MjI4NDksImV4cCI6MTc2MjMyNzY0OX0.KclXxEwgIT40I6LhstVMVonc7LDpJ9YSDQzc0m11qR4";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -25,8 +26,8 @@ api.interceptors.response.use(
 export const getAnnouncementStats = async () => {
   try {
     const res = await api.get("/api/announcements/stats");
-    console.log("🔹 API Response:", res.data); 
-    return res.data; 
+    console.log("🔹 API Response:", res.data);
+    return res.data;
   } catch (error) {
     console.error("❌ getAnnouncementStats error:", error);
     throw error;
@@ -51,7 +52,6 @@ export const getAnnouncements = async (status = "", page = 1, limit = 6) => {
     return [];
   }
 };
-
 
 export const getAnnouncementById = async (id) => {
   try {
@@ -108,7 +108,7 @@ export const createAnnouncementStep1 = async ({
   announcement_cover_url,
   page_cover_url,
   tags,
-  status = "draft"
+  status = "draft",
 }) => {
   try {
     const payload = {
@@ -118,7 +118,7 @@ export const createAnnouncementStep1 = async ({
       announcement_cover_url,
       page_cover_url,
       tags,
-      status
+      status,
     };
     const res = await api.post("/api/announcements", payload);
     return res.data.data;
@@ -139,16 +139,15 @@ export const updateRecipientsStep2 = async (announcementId, recipients) => {
 };
 
 // Step 3: Update schedule and publish
-export const updateScheduleStep3 = async (announcementId, {
-  enable_comments,
-  status,
-  publish_date
-}) => {
+export const updateScheduleStep3 = async (
+  announcementId,
+  { enable_comments, status, publish_date }
+) => {
   try {
     const payload = {
       enable_comments,
       status,
-      publish_date
+      publish_date,
     };
     const res = await api.put(`/api/announcements/${announcementId}`, payload);
     return res.data.data;
@@ -172,7 +171,7 @@ export const createCompleteAnnouncement = async ({
   // Step 3 data
   enable_comments,
   status,
-  publish_date
+  publish_date,
 }) => {
   try {
     // Step 1: Create announcement
@@ -183,7 +182,7 @@ export const createCompleteAnnouncement = async ({
       announcement_cover_url,
       page_cover_url,
       tags,
-      status: "draft" // Always start as draft
+      status: "draft", // Always start as draft
     });
 
     const announcementId = announcement.id;
@@ -195,7 +194,7 @@ export const createCompleteAnnouncement = async ({
     const finalAnnouncement = await updateScheduleStep3(announcementId, {
       enable_comments,
       status,
-      publish_date
+      publish_date,
     });
 
     return finalAnnouncement;

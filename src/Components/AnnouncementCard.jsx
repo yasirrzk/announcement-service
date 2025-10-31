@@ -68,7 +68,6 @@ const AnnouncementCard = () => {
   );
 };
 
-// 🔹 Komponen tunggal untuk setiap card
 const SingleAnnouncementCard = ({ announcement }) => {
   const {
     title,
@@ -257,7 +256,7 @@ const SingleAnnouncementCard = ({ announcement }) => {
             <ChatBubbleOutlineIcon sx={{ fontSize: 16, color: "text.secondary" }} />
             <Typography variant="caption" fontWeight="medium">
               {comments_count ?? 0}
-            </Typography>
+            </Typography> 
           </Stack>
           <Stack direction="row" spacing={0.3} alignItems="center">
             <ShareIcon sx={{ fontSize: 16, color: "text.secondary" }} />

@@ -23,7 +23,6 @@ const StatCard = () => {
         const statsRes = await getAnnouncementStats();
         console.log("📊 Stats fetched:", statsRes);
 
-        // Set stats dari response API
         if (statsRes && statsRes.data) {
           setStats(statsRes.data);
         }

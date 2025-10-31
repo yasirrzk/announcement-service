@@ -1,4 +1,3 @@
-import "./App.css";
 import AnnouncementPage from "./Pages/Dashboard/AnnouncementPage";
 import CreateAnnouncement from "./Pages/Organization/CreateAnnouncement";
 import Header from "./Layout/Header";
@@ -11,8 +10,8 @@ import AnnouncementDetail from "./Pages/Dashboard/AnnouncementDetail";
 const theme = createTheme({
   palette: {
     background: {
-      default: "#f5f5f5",
-      paper: "#ffffff",
+      default: "#ffffffff",
+      paper: "#ffffffff",
     },
   },
   components: {

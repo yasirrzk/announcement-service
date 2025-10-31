@@ -1,4 +1,4 @@
-export const announcementData = {
+export const  announcementData = {
   id: 1,
   title: "Pemberitahuan Penting: Penyesuaian Aturan dan Kebijakan Kerja PT ABC Efektif 1 November 2025",
   author: "Jhon Doe",

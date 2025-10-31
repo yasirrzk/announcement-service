@@ -197,7 +197,7 @@ const AnnouncementContentStep = ({
             multiple
             name="tags"
             value={formData.tags}
-            onChange={handleChange} // Gunakan props
+            onChange={handleChange} 
             input={<OutlinedInput label="Tags" />}
             renderValue={(selected) => (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
