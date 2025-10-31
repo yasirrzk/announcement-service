@@ -32,12 +32,7 @@ const RecipientStep = ({ onPrevious, onNext }) => {
 
   return (
     <Box
-      sx={{
-        p: 3,
-        border: "1px solid #E0E0E0",
-        borderRadius: 2,
-        backgroundColor: "#fff",
-      }}
+     
     >
       <Typography fontWeight={600} mb={1}>
         Recipient

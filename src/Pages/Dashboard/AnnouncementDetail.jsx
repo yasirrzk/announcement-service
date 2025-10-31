@@ -1,5 +1,4 @@
-import React from "react";
-import { announcementData } from "./data";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -13,11 +12,12 @@ import {
   Stack,
   TextField,
   Typography,
-  IconButton,
+  CircularProgress,
 } from "@mui/material";
+import { useParams } from "react-router-dom";
+import { getAnnouncementById } from "../../Services/Data"; 
 
-const handleBack = () => setActiveStep((prev) => prev - 1);
-
+// ====================== Header ======================
 const AnnouncementHeader = ({ title, author, date, image }) => {
   return (
     <Box>
@@ -49,14 +49,17 @@ const AnnouncementHeader = ({ title, author, date, image }) => {
   );
 };
 
+// ====================== Content ======================
 const AnnouncementContent = ({ content, sections }) => {
   return (
     <Box mt={4}>
-      <Typography variant="body1" color="text.secondary" paragraph>
-        {content}
-      </Typography>
+      {content && (
+        <Typography variant="body1" color="text.secondary" paragraph>
+          {content}
+        </Typography>
+      )}
 
-      {sections.map((section, index) => (
+      {sections?.map((section, index) => (
         <Box key={index} mt={3}>
           <Typography
             variant="h6"
@@ -70,13 +73,13 @@ const AnnouncementContent = ({ content, sections }) => {
             {section.description}
           </Typography>
 
-          {section.points.map((point, idx) => (
+          {section.points?.map((point, idx) => (
             <Box key={idx} mb={2}>
               <Typography variant="subtitle1" fontWeight={600}>
                 {point.subtitle}
               </Typography>
               <List dense>
-                {point.details.map((d, i) => (
+                {point.details?.map((d, i) => (
                   <ListItem key={i} sx={{ py: 0 }}>
                     <ListItemText
                       primaryTypographyProps={{ variant: "body2" }}
@@ -93,7 +96,9 @@ const AnnouncementContent = ({ content, sections }) => {
   );
 };
 
+// ====================== Tags ======================
 const AnnouncementTags = ({ tags }) => {
+  if (!tags?.length) return null;
   return (
     <Box mt={3} display="flex" flexWrap="wrap" gap={1}>
       {tags.map((tag, i) => (
@@ -103,11 +108,12 @@ const AnnouncementTags = ({ tags }) => {
   );
 };
 
+// ====================== Comments ======================
 const CommentSection = ({ comments }) => {
   return (
     <Box mt={6}>
       <Typography variant="h6" gutterBottom>
-        Comments ({comments.length})
+        Comments ({comments?.length || 0})
       </Typography>
 
       <Stack spacing={2} mb={3}>
@@ -125,7 +131,7 @@ const CommentSection = ({ comments }) => {
       <Divider sx={{ mb: 3 }} />
 
       <Stack spacing={3}>
-        {comments.map((c) => (
+        {comments?.map((c) => (
           <Stack direction="row" spacing={2} key={c.id}>
             <Avatar src="/images/user.png" alt={c.name} />
             <Box>
@@ -146,8 +152,44 @@ const CommentSection = ({ comments }) => {
   );
 };
 
+// ====================== Main Component ======================
 const AnnouncementDetail = () => {
-  const data = announcementData;
+  const { id } = useParams(); // ambil ID dari URL
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getAnnouncementById(id);
+        setData(result);
+      } catch (err) {
+        console.error("❌ Gagal ambil data announcement:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Container maxWidth="md" sx={{ textAlign: "center", py: 10 }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Container maxWidth="md" sx={{ py: 10 }}>
+        <Typography textAlign="center">
+          Data pengumuman tidak ditemukan.
+        </Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="md" sx={{ py: 5 }}>

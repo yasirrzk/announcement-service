@@ -15,7 +15,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import AnnouncementContentStep from "../../Components/AnnouncementContentStep";
 import RecipientStep from "../Organization/RecepientStep";
-import ScheduleStep from "./ScheduleStep"; 
+import ScheduleStep from "./ScheduleStep";
 import { useNavigate } from "react-router-dom";
 import { useAnnouncementForm } from "../../Hooks/UseAnnouncementForm";
 
@@ -36,20 +36,22 @@ const CreateAnnouncement = () => {
   };
 
   const handlePreview = () => {
-  localStorage.setItem("announcementFormData", JSON.stringify(formHook.formData));
-  localStorage.setItem("returningFromPreview", "true"); 
-  navigate("/announcement/preview");
-};
-
+    localStorage.setItem(
+      "announcementFormData",
+      JSON.stringify(formHook.formData)
+    );
+    localStorage.setItem("returningFromPreview", "true");
+    navigate("/announcement/preview");
+  };
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleSubmit = () => {
     console.log("FORM DATA LENGKAP:", formHook.formData);
-    
+
     localStorage.removeItem("announcementFormData");
-    
+
     alert("Announcement Created!");
     navigate("/announcement");
   };
@@ -70,7 +72,7 @@ const CreateAnnouncement = () => {
             {...formHook}
             onPrevious={handleBack}
             onNext={handleNext}
-            onPreview={handlePreview} 
+            onPreview={handlePreview}
           />
         );
       case 2:
@@ -78,7 +80,7 @@ const CreateAnnouncement = () => {
           <ScheduleStep
             {...formHook}
             onPrevious={handleBack}
-            onSubmit={handleSubmit} 
+            onSubmit={handleSubmit}
           />
         );
       default:
@@ -108,16 +110,41 @@ const CreateAnnouncement = () => {
       </Stack>
 
       {/* Stepper */}
-      <Stepper activeStep={activeStep} sx={{ mb: 5 }}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+      {/* Stepper + Konten Form dalam satu border */}
+      <Box
+        sx={{
+          p: 3,
+          border: "1px solid #E0E0E0",
+          borderRadius: 2,
+          backgroundColor: "#fff",
+        }}
+      >
+        {/* Stepper */}
+        <Stepper
+          activeStep={activeStep}
+          sx={{
+            mb: 5,
+            "& .MuiStepLabel-root .Mui-completed": {
+              color: "green !important",
+            },
+            "& .MuiStepLabel-root .Mui-active": {
+              color: "primary.main",
+            },
+            "& .MuiStepIcon-root.Mui-completed": {
+              color: "green !important",
+            },
+          }}
+        >
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
 
-      {/* Konten Form */}
-      <Box>{getStepContent(activeStep)}</Box>
+        {/* Konten Form */}
+        {getStepContent(activeStep)}
+      </Box>
     </Container>
   );
 };
