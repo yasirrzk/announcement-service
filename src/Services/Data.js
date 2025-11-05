@@ -182,7 +182,7 @@ export const createCompleteAnnouncement = async ({
       announcement_cover_url,
       page_cover_url,
       tags,
-      status: "draft", // Always start as draft
+      status: "draft", 
     });
 
     const announcementId = announcement.id;
