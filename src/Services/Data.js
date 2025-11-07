@@ -3,7 +3,7 @@ import axios from "axios";
 const API_BASE_URL =
   "https://phototypically-unexcluding-roland.ngrok-free.dev/";
 const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlYzFlZGYxLTMyMTItNDAyZi1iNzgzLWU5ZjU4YTYwYTM2OSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJuaWsiOiIxMjMyMzQiLCJpYXQiOjE3NjE3MjI4NDksImV4cCI6MTc2MjMyNzY0OX0.KclXxEwgIT40I6LhstVMVonc7LDpJ9YSDQzc0m11qR4";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlYzFlZGYxLTMyMTItNDAyZi1iNzgzLWU5ZjU4YTYwYTM2OSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJuaWsiOiIxMjMyMzQiLCJpYXQiOjE3NjI1MDAzMDQsImV4cCI6MTc2MzEwNTEwNH0.XuTGhgf_sAcRbPcgjISp2NP5QvzuyVa5ZJlkg-_7Zvc";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -37,18 +37,19 @@ export const getAnnouncementStats = async () => {
 // ========== ANNOUNCEMENTS ==========
 export const getAnnouncements = async (status = "", page = 1, limit = 6) => {
   try {
-    const res = await api.get("/api/announcements", {
-      params: { status, page, limit },
-    });
+    const params = { page, limit };
 
-    console.log("📦 Raw response:", res.data);
+    if (status) {
+      params.status = status;
+    }
 
-    const data = res.data?.data?.data || [];
+    const res = await api.get("/api/announcements", { params });
 
-    console.log("✅ Parsed data (array):", data);
-    return data;
+    console.log("Raw response:", res.data);
+
+    return res.data?.data?.data || [];
   } catch (error) {
-    console.error("❌ Error fetching announcements:", error);
+    console.error("Error fetching announcements:", error);
     return [];
   }
 };
@@ -94,6 +95,17 @@ export const getDepartments = async () => {
   try {
     const res = await api.get("/api/departments");
     return res.data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// ============ COMMENTS =================
+
+export const getCommentsByAnnouncementId = async (announcementId) => {
+  try {
+    const res = await api.get(`/api/announcements/${announcementId}/comments`);
+    return res.data.data.data;
   } catch (error) {
     throw error;
   }
@@ -182,7 +194,7 @@ export const createCompleteAnnouncement = async ({
       announcement_cover_url,
       page_cover_url,
       tags,
-      status: "draft", 
+      status: "draft",
     });
 
     const announcementId = announcement.id;

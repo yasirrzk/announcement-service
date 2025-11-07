@@ -20,7 +20,7 @@ import "quill-table-better/dist/quill-table-better.css";
 import FileUpload from "../Components/FileUpload";
 
 Quill.register({ "modules/table-better": QuillTableBetter }, true);
-
+  
 const AnnouncementContentStep = ({
   onNext,
   onPreview,

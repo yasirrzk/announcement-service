@@ -28,17 +28,29 @@ const AnnouncementPage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const statusMapping = {
+    All: "",
+    Published: "published",
+    Draft: "draft",
+    Unpublished: "unpublished",
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
         const statsData = await getAnnouncementStats();
-        console.log("📊 Stats response:", statsData);
         setStats(statsData.data || {});
 
-        let statusParam = filter === "All" ? "" : filter.toLowerCase();
-        const announcementsData = await getAnnouncements(statusParam);
+        const statusParam = statusMapping[filter];
+
+        const announcementsData = await getAnnouncements(statusParam, 1, 10);
+
+        console.log("FILTER:", filter);
+        console.log("STATUS PARAM:", statusParam);
+        console.log("API DATA:", announcementsData);
+
         setAnnouncements(announcementsData);
       } catch (err) {
         console.error("❌ Error fetching announcements:", err);
@@ -104,15 +116,11 @@ const AnnouncementPage = () => {
           }}
         > */}
         <Stack direction="row" spacing={1}>
-          {["All", "Published", "Draft", "Unpublished"].map((item) => (
+          {["All", "Published", "Draft", "Unpublished"].map((item, index) => (
             <Button
-              key={item}
+              key={index}
               variant={filter === item ? "contained" : "outlined"}
               onClick={() => setFilter(item)}
-              sx={{
-                textTransform: "none",
-                borderRadius: "6px",
-              }}
             >
               {item}
             </Button>
