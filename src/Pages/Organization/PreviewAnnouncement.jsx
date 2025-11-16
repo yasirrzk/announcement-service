@@ -11,6 +11,10 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 
+// WAJIB supaya tabel tampil di preview
+import "react-quill-new/dist/quill.snow.css";
+import "quill-table-better/dist/quill-table-better.css";
+
 const AnnouncementPreview = () => {
   const [data, setData] = useState(null);
   const navigate = useNavigate();
@@ -24,15 +28,9 @@ const AnnouncementPreview = () => {
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      {/* Cover */}
+      {/* Page Cover */}
       {data.pageCover && (
-        <Box
-          sx={{
-            borderRadius: 2,
-            overflow: "hidden",
-            mb: 4,
-          }}
-        >
+        <Box sx={{ borderRadius: 2, overflow: "hidden", mb: 4 }}>
           <img
             src={data.pageCover}
             alt="Page Cover"
@@ -41,12 +39,12 @@ const AnnouncementPreview = () => {
         </Box>
       )}
 
-      {/* Judul */}
+      {/* Title */}
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         {data.postTitle}
       </Typography>
 
-      {/* Avatar + tanggal */}
+      {/* Avatar + Date */}
       <Stack direction="row" spacing={2} alignItems="center" mb={3}>
         <Avatar src="/default-avatar.png" />
         <Box>
@@ -59,7 +57,7 @@ const AnnouncementPreview = () => {
         </Box>
       </Stack>
 
-      {/* Deskripsi */}
+      {/* Description */}
       <Typography variant="body1" mb={3}>
         {data.description}
       </Typography>
@@ -75,11 +73,21 @@ const AnnouncementPreview = () => {
         </Box>
       )}
 
-      {/* Detail */}
+      {/* DETAILS (HTML from Quill) */}
       <Box
         sx={{
           "& img": { maxWidth: "100%" },
           "& p": { mb: 2 },
+
+          "& table": {
+            width: "100%",
+            borderCollapse: "collapse",
+            marginBottom: 2,
+          },
+          "& td, & th": {
+            border: "1px solid #ccc",
+            padding: "8px",
+          },
         }}
         dangerouslySetInnerHTML={{ __html: data.details }}
       />
@@ -91,7 +99,7 @@ const AnnouncementPreview = () => {
         ))}
       </Stack>
 
-      {/* Tombol Back */}
+      {/* Back Button */}
       <Stack direction="row" justifyContent="flex-end" mt={4}>
         <Button
           variant="contained"

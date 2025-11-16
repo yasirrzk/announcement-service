@@ -17,18 +17,15 @@ export const useAnnouncementForm = () => {
     const returningFromPreview = localStorage.getItem("returningFromPreview");
 
     if (returningFromPreview === "true" && savedData) {
-      // ✅ Balik dari preview → load draft lama
       setFormData(JSON.parse(savedData));
       localStorage.removeItem("returningFromPreview");
     } else {
-      // 🚫 Pertama kali buka → hapus draft lama
       localStorage.removeItem("announcementFormData");
     }
 
     setIsLoading(false);
   }, []);
 
-  // 🔁 Simpan otomatis setiap kali form berubah
   useEffect(() => {
     if (!isLoading) {
       localStorage.setItem("announcementFormData", JSON.stringify(formData));

@@ -90,6 +90,17 @@ export const deleteAnnouncement = async (announcementId) => {
   }
 };
 
+// ========== TAGS ==========
+
+export const getTags =  async () => {
+  try {
+    const res = await api.get("/api/tags/search")
+    return res.data.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 // ========== DEPARTMENTS ==========
 export const getDepartments = async () => {
   try {
