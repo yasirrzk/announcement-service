@@ -112,14 +112,16 @@ const SingleAnnouncementCard = ({ announcement }) => {
       }}
     >
       {/* Gambar */}
-      <CardMedia
-        component="img"
-        height="160"
-        image={announcement_cover_url || defaultImage}
-        alt={title}
-        onError={handleImageError}
-        sx={{ padding: "10px" }}
-      />
+      <div style={{ padding: "10px" }}>
+        <CardMedia
+          component="img"
+          height="160"
+          image={announcement_cover_url || defaultImage}
+          alt={title}
+          // onError={handleImageError}
+          sx={{ borderRadius: "10px" }}
+        />
+      </div>
 
       <CardContent sx={{ flexGrow: 1, pb: 1 }}>
         <Box
