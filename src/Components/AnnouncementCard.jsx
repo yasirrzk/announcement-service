@@ -17,7 +17,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ShareIcon from "@mui/icons-material/Share";
-import { getAnnouncements } from "../Services/Data"; 
+import { getAnnouncements } from "../Services/Data";
 
 const statusColors = {
   published: "success",
@@ -53,14 +53,7 @@ const AnnouncementCard = () => {
   return (
     <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
       {announcements.map((announcement) => (
-        <Grid
-          item
-          key={announcement.id}
-          xs={12}
-          sm={6}
-          md={4}
-          sx={{ display: "flex" }}
-        >
+        <Grid item key={announcement.id} xs={12} sm={6} md={4} size={4}>
           <SingleAnnouncementCard announcement={announcement} />
         </Grid>
       ))}
@@ -103,6 +96,7 @@ const SingleAnnouncementCard = ({ announcement }) => {
     <Card
       elevation={3}
       sx={{
+        border: "0.2px solid #e0e0e0",
         borderRadius: 4,
         overflow: "hidden",
         width: "100%",
@@ -124,6 +118,7 @@ const SingleAnnouncementCard = ({ announcement }) => {
         image={announcement_cover_url || defaultImage}
         alt={title}
         onError={handleImageError}
+        sx={{ padding: "10px" }}
       />
 
       <CardContent sx={{ flexGrow: 1, pb: 1 }}>
@@ -214,7 +209,12 @@ const SingleAnnouncementCard = ({ announcement }) => {
         )}
 
         {publish_date && status === "published" && (
-          <Typography variant="caption" color="primary" display="block" mb={0.5}>
+          <Typography
+            variant="caption"
+            color="primary"
+            display="block"
+            mb={0.5}
+          >
             📅 Published: {formatDate(publish_date)}
           </Typography>
         )}
@@ -253,10 +253,12 @@ const SingleAnnouncementCard = ({ announcement }) => {
             </Typography>
           </Stack>
           <Stack direction="row" spacing={0.3} alignItems="center">
-            <ChatBubbleOutlineIcon sx={{ fontSize: 16, color: "text.secondary" }} />
+            <ChatBubbleOutlineIcon
+              sx={{ fontSize: 16, color: "text.secondary" }}
+            />
             <Typography variant="caption" fontWeight="medium">
               {comments_count ?? 0}
-            </Typography> 
+            </Typography>
           </Stack>
           <Stack direction="row" spacing={0.3} alignItems="center">
             <ShareIcon sx={{ fontSize: 16, color: "text.secondary" }} />
