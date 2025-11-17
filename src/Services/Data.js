@@ -3,7 +3,7 @@ import axios from "axios";
 const API_BASE_URL =
   "https://phototypically-unexcluding-roland.ngrok-free.dev/";
 const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlYzFlZGYxLTMyMTItNDAyZi1iNzgzLWU5ZjU4YTYwYTM2OSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJuaWsiOiIxMjMyMzQiLCJpYXQiOjE3NjI1MDAzMDQsImV4cCI6MTc2MzEwNTEwNH0.XuTGhgf_sAcRbPcgjISp2NP5QvzuyVa5ZJlkg-_7Zvc";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRlYzFlZGYxLTMyMTItNDAyZi1iNzgzLWU5ZjU4YTYwYTM2OSIsImVtYWlsIjoiam9obi5kb2VAY29tcGFueS5jb20iLCJuaWsiOiIxMjMyMzQiLCJpYXQiOjE3NjMzNDc0MDYsImV4cCI6MTc2Mzk1MjIwNn0.wrJa738gJA8DH5m8kj-etk8PldVkHeLn5ISpJOfpzMI";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -92,14 +92,17 @@ export const deleteAnnouncement = async (announcementId) => {
 
 // ========== TAGS ==========
 
-export const getTags =  async () => {
+export const getTags = async (q = "", limit = 10) => {
   try {
-    const res = await api.get("/api/tags/search")
-    return res.data.data;
+    const res = await api.get(`/api/announcements/tags/popular`, {
+      params: { q, limit }
+    });
+    return res.data.data.map((tag) => tag.name);
   } catch (error) {
     throw error;
   }
-}
+};
+
 
 // ========== DEPARTMENTS ==========
 export const getDepartments = async () => {
@@ -182,16 +185,13 @@ export const updateScheduleStep3 = async (
 // ========== HELPER FUNCTIONS ==========
 
 export const createCompleteAnnouncement = async ({
-  // Step 1 data
   title,
   description,
   content,
   announcement_cover_url,
   page_cover_url,
   tags,
-  // Step 2 data
   recipients,
-  // Step 3 data
   enable_comments,
   status,
   publish_date,

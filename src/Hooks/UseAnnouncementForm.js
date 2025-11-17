@@ -58,6 +58,7 @@ export const useAnnouncementForm = () => {
 
   return {
     formData,
+    setFormData,   
     isLoading,
     handleChange,
     handleQuillChange,

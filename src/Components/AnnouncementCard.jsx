@@ -118,7 +118,6 @@ const SingleAnnouncementCard = ({ announcement }) => {
           height="160"
           image={announcement_cover_url || defaultImage}
           alt={title}
-          // onError={handleImageError}
           sx={{ borderRadius: "10px" }}
         />
       </div>

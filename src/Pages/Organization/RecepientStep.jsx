@@ -47,7 +47,7 @@ const RecipientStep = ({ onPrevious, onNext }) => {
           onChange={(e) => setRecipient(e.target.value)}
         >
           <MenuItem value="Department">Department</MenuItem>
-          <MenuItem value="Division">Division</MenuItem>
+          <MenuItem value="Employee">Employee</MenuItem>
         </Select>
       </FormControl>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   TextField,
@@ -11,28 +11,49 @@ import {
   InputLabel,
   Button,
   Stack,
-  CircularProgress, 
+  CircularProgress,
 } from "@mui/material";
 import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import QuillTableBetter from "quill-table-better";
 import "quill-table-better/dist/quill-table-better.css";
 import FileUpload from "../Components/FileUpload";
+import { getTags } from "../Services/Data";
+import TagSelector from "./TagSelector";
 
 Quill.register({ "modules/table-better": QuillTableBetter }, true);
-  
+
 const AnnouncementContentStep = ({
   onNext,
   onPreview,
   formData,
-  isLoading, 
-  handleChange, 
-  handleQuillChange, 
-  handleFileDrop, 
-  handleRemoveFile, 
+  isLoading,
+  handleChange,
+  handleQuillChange,
+  handleFileDrop,
+  handleRemoveFile,
+  setFormData
 }) => {
   const quillRef = useRef(null);
 
+  const [availableTags, setAvailableTags] = useState([]);
+
+  // ========= FETCH TAGS DARI SERVICE =========== //
+  useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const tagData = await getTags("", 50); 
+        const names = tagData.map((t) => t.name); 
+        setAvailableTags(names);
+      } catch (err) {
+        console.error("Failed to fetch tags:", err);
+      }
+    };
+
+    loadTags();
+  }, []);
+
+  // QUILL
   const quillModules = useMemo(
     () => ({
       toolbar: {
@@ -73,10 +94,8 @@ const AnnouncementContentStep = ({
     []
   );
 
-
   useEffect(() => {
     if (isLoading) return;
-
     const quill = quillRef.current?.getEditor();
     if (!quill) return;
 
@@ -88,8 +107,6 @@ const AnnouncementContentStep = ({
       });
     }
   }, [isLoading]);
-
-  const availableTags = ["Urgent", "Important", "Update", "Event"];
 
   if (isLoading) {
     return (
@@ -106,7 +123,6 @@ const AnnouncementContentStep = ({
     );
   }
 
-  
   return (
     <Box component="form" noValidate autoComplete="off">
       {/* Post Title */}
@@ -119,7 +135,7 @@ const AnnouncementContentStep = ({
           name="postTitle"
           placeholder="Iklan"
           value={formData.postTitle}
-          onChange={handleChange} 
+          onChange={handleChange}
         />
       </Box>
 
@@ -133,21 +149,21 @@ const AnnouncementContentStep = ({
           name="description"
           placeholder="Deskripsi pengumuman..."
           value={formData.description}
-          onChange={handleChange} 
+          onChange={handleChange}
           multiline
           rows={2}
         />
       </Box>
 
-      {/* File Uploads */}
+      {/* File Upload */}
       <Box sx={{ mb: 3 }}>
         <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Announcement Covers
         </Typography>
         <FileUpload
-          onDrop={(files) => handleFileDrop("announcementCover", files)} 
+          onDrop={(files) => handleFileDrop("announcementCover", files)}
           file={formData.announcementCover}
-          onRemove={() => handleRemoveFile("announcementCover")} 
+          onRemove={() => handleRemoveFile("announcementCover")}
         />
       </Box>
 
@@ -156,9 +172,9 @@ const AnnouncementContentStep = ({
           Page Cover
         </Typography>
         <FileUpload
-          onDrop={(files) => handleFileDrop("pageCover", files)} 
+          onDrop={(files) => handleFileDrop("pageCover", files)}
           file={formData.pageCover}
-          onRemove={() => handleRemoveFile("pageCover")} 
+          onRemove={() => handleRemoveFile("pageCover")}
         />
       </Box>
 
@@ -177,9 +193,9 @@ const AnnouncementContentStep = ({
         >
           <ReactQuill
             ref={quillRef}
-            theme={"snow"}
+            theme="snow"
             value={formData.details}
-            onChange={handleQuillChange} 
+            onChange={handleQuillChange}
             modules={quillModules}
           />
         </Box>
@@ -187,48 +203,14 @@ const AnnouncementContentStep = ({
 
       {/* Tags */}
       <Box sx={{ mb: 3 }}>
-        <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+        {/* <Typography variant="subtitle1" fontWeight={600} gutterBottom>
           Tags
-        </Typography>
-        <FormControl fullWidth>
-          <InputLabel id="tags-select-label">Tags</InputLabel>
-          <Select
-            labelId="tags-select-label"
-            multiple
-            name="tags"
-            value={formData.tags}
-            onChange={handleChange} 
-            input={<OutlinedInput label="Tags" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip
-                    key={value}
-                    label={value}
-                    onDelete={() =>
-                      handleChange({
-                        target: {
-                          name: "tags",
-                          value: formData.tags.filter((t) => t !== value),
-                        },
-                      })
-                    }
-                    onMouseDown={(e) => e.stopPropagation()}
-                  />
-                ))}
-              </Box>
-            )}
-          >
-            {availableTags.map((tag) => (
-              <MenuItem key={tag} value={tag}>
-                {tag}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        </Typography> */}
+
+        <TagSelector formData={formData} setFormData={setFormData} />
       </Box>
 
-      {/* Tombol Aksi */}
+      {/* BUTTONS */}
       <Stack direction="row" justifyContent="flex-end" spacing={2} mt={4}>
         <Button variant="outlined" color="secondary" onClick={onPreview}>
           Preview

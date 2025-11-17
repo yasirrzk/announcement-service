@@ -8,7 +8,6 @@ import {
   Stack,
   Typography,
   Breadcrumbs,
-  Link,
   IconButton,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -25,21 +24,19 @@ const CreateAnnouncement = () => {
   const [activeStep, setActiveStep] = useState(0);
   const navigate = useNavigate();
 
+  // ----------------------------
+  // ✅ gunakan satu sumber truth
+  // ----------------------------
   const formHook = useAnnouncementForm();
+  const { formData, setFormData } = formHook;
 
   const handleNavigateBack = () => {
-    localStorage.setItem(
-      "announcementFormData",
-      JSON.stringify(formHook.formData)
-    );
+    localStorage.setItem("announcementFormData", JSON.stringify(formData));
     navigate("/announcement");
   };
 
   const handlePreview = () => {
-    localStorage.setItem(
-      "announcementFormData",
-      JSON.stringify(formHook.formData)
-    );
+    localStorage.setItem("announcementFormData", JSON.stringify(formData));
     localStorage.setItem("returningFromPreview", "true");
     navigate("/announcement/preview");
   };
@@ -48,8 +45,7 @@ const CreateAnnouncement = () => {
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
   const handleSubmit = () => {
-    console.log("FORM DATA LENGKAP:", formHook.formData);
-
+    console.log("FINAL FORM:", formData);
     localStorage.removeItem("announcementFormData");
 
     alert("Announcement Created!");
@@ -62,10 +58,13 @@ const CreateAnnouncement = () => {
         return (
           <AnnouncementContentStep
             {...formHook}
+            formData={formData}
+            setFormData={setFormData}
             onNext={handleNext}
             onPreview={handlePreview}
           />
         );
+
       case 1:
         return (
           <RecipientStep
@@ -75,6 +74,7 @@ const CreateAnnouncement = () => {
             onPreview={handlePreview}
           />
         );
+
       case 2:
         return (
           <ScheduleStep
@@ -83,6 +83,7 @@ const CreateAnnouncement = () => {
             onSubmit={handleSubmit}
           />
         );
+
       default:
         return "Unknown step";
     }
@@ -95,12 +96,11 @@ const CreateAnnouncement = () => {
           separator={<NavigateNextIcon fontSize="small" />}
           aria-label="breadcrumb"
         >
-          {/* ... (breadcrumbs kamu) ... */}
           <Typography color="text.primary">Create Announcement</Typography>
         </Breadcrumbs>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <IconButton onClick={handleNavigateBack} aria-label="go back">
+          <IconButton onClick={handleNavigateBack}>
             <ArrowBackIcon fontSize="large" />
           </IconButton>
           <Typography variant="h4" fontWeight={700}>
@@ -109,8 +109,6 @@ const CreateAnnouncement = () => {
         </Box>
       </Stack>
 
-      {/* Stepper */}
-      {/* Stepper + Konten Form dalam satu border */}
       <Box
         sx={{
           p: 3,
@@ -119,20 +117,12 @@ const CreateAnnouncement = () => {
           backgroundColor: "#fff",
         }}
       >
-        {/* Stepper */}
         <Stepper
           activeStep={activeStep}
           sx={{
             mb: 5,
-            "& .MuiStepLabel-root .Mui-completed": {
-              color: "green !important",
-            },
-            "& .MuiStepLabel-root .Mui-active": {
-              color: "primary.main",
-            },
-            "& .MuiStepIcon-root.Mui-completed": {
-              color: "green !important",
-            },
+            "& .MuiStepLabel-root .Mui-active": { color: "primary.main" },
+            "& .MuiStepIcon-root.Mui-completed": { color: "green !important" },
           }}
         >
           {steps.map((label) => (
@@ -142,7 +132,6 @@ const CreateAnnouncement = () => {
           ))}
         </Stepper>
 
-        {/* Konten Form */}
         {getStepContent(activeStep)}
       </Box>
     </Container>
