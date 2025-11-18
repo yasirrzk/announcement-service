@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
-  Grid,
-  Typography,
   Card,
   CardContent,
   CardMedia,
@@ -11,13 +9,13 @@ import {
   IconButton,
   Stack,
   Avatar,
+  Typography,
 } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import ShareIcon from "@mui/icons-material/Share";
-import { getAnnouncements } from "../Services/Data";
 
 const statusColors = {
   published: "success",
@@ -25,43 +23,7 @@ const statusColors = {
   unpublished: "error",
 };
 
-const AnnouncementCard = () => {
-  const [announcements, setAnnouncements] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchAnnouncements = async () => {
-      setLoading(true);
-      try {
-        const res = await getAnnouncements();
-        console.log("📢 Data dari API:", res);
-        setAnnouncements(res);
-      } catch (err) {
-        console.error("❌ Gagal memuat data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAnnouncements();
-  }, []);
-
-  if (loading) return <Typography>Loading announcements...</Typography>;
-  if (!announcements || announcements.length === 0)
-    return <Typography>Tidak ada pengumuman ditemukan.</Typography>;
-
-  return (
-    <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
-      {announcements.map((announcement) => (
-        <Grid item key={announcement.id} xs={12} sm={6} md={4} size={4}>
-          <SingleAnnouncementCard announcement={announcement} />
-        </Grid>
-      ))}
-    </Grid>
-  );
-};
-
-const SingleAnnouncementCard = ({ announcement }) => {
+const AnnouncementCard = ({ announcement }) => {
   const {
     title,
     description,
@@ -79,9 +41,11 @@ const SingleAnnouncementCard = ({ announcement }) => {
   } = announcement;
 
   const defaultImage =
-    "https://via.placeholder.com/400x200.png?text=No+Image+Available";
+    "https://placehold.co/400x200/e0e0e0/666666?text=No+Image";
 
-  const handleImageError = (e) => (e.target.src = defaultImage);
+  const handleImageError = (e) => {
+    e.target.src = defaultImage;
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -107,21 +71,21 @@ const SingleAnnouncementCard = ({ announcement }) => {
           cursor: "pointer",
         },
         display: "flex",
-        flexDirection: "column",
+        flexDirection: "column", // ✅ KEMBALI KE COLUMN (vertikal)
         height: "100%",
       }}
     >
-      {/* Gambar */}
-      <div style={{ padding: "10px" }}>
-        <CardMedia
-          component="img"
-          height="160"
-          image={announcement_cover_url || defaultImage}
-          alt={title}
-          sx={{ borderRadius: "10px" }}
-        />
-      </div>
+      {/* ✅ GAMBAR DI ATAS */}
+      <CardMedia
+        component="img"
+        height="180"
+        image={announcement_cover_url || defaultImage}
+        alt={title}
+        onError={handleImageError}
+        sx={{ objectFit: "cover" }}
+      />
 
+      {/* ✅ CONTENT DI BAWAH */}
       <CardContent sx={{ flexGrow: 1, pb: 1 }}>
         <Box
           display="flex"

@@ -45,6 +45,10 @@ export const getAnnouncements = async (status = "", page = 1, limit = 6) => {
 
     const res = await api.get("/api/announcements", { params });
 
+    console.log("🔹 Request params:", params);
+    console.log("🔹 Raw response:", res.data);
+    console.log("🔹 Data array:", res.data?.data?.data);
+    console.log("🔹 Data length:", res.data?.data?.data?.length);
     console.log("Raw response:", res.data);
 
     return res.data?.data?.data || [];

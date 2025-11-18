@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography, Box, Avatar, Grid } from "@mui/material";
+import { Paper, Typography, Box, Avatar } from "@mui/material";
 import { getAnnouncementStats } from "../Services/Data";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import DraftsIcon from "@mui/icons-material/Drafts";
@@ -13,7 +13,6 @@ const StatCard = () => {
     totalDraft: 0,
     totalUnpublished: 0,
   });
-
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,8 +20,6 @@ const StatCard = () => {
       setLoading(true);
       try {
         const statsRes = await getAnnouncementStats();
-        console.log("📊 Stats fetched:", statsRes);
-
         if (statsRes && statsRes.data) {
           setStats(statsRes.data);
         }
@@ -64,15 +61,23 @@ const StatCard = () => {
   ];
 
   return (
-    <Grid container spacing={3}>
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 3,
+      }}
+    >
       {cards.map((card, index) => (
-        <Grid
-          item
-          size={3}
-          xs={12}
-          sm={6}
-          md={3}
+        <Box
           key={index}
+          sx={{
+            flexBasis: {
+              xs: "100%",                  // Mobile: 1 per baris
+              sm: "calc(50% - 12px)",      // Tablet: 2 per baris
+              md: "calc(25% - 18px)",      // Desktop: 4 per baris
+            },
+          }}
         >
           <Paper
             elevation={3}
@@ -81,7 +86,7 @@ const StatCard = () => {
               display: "flex",
               alignItems: "center",
               borderLeft: `5px solid ${card.color}`,
-              width: "100%",
+              height: "100%",
             }}
           >
             <Avatar sx={{ bgcolor: card.color, mr: 2 }}>{card.icon}</Avatar>
@@ -92,9 +97,9 @@ const StatCard = () => {
               </Typography>
             </Box>
           </Paper>
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </Box>
   );
 };
 
