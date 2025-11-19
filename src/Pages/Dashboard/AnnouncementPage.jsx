@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
   Container,
-  Grid,
   Typography,
   Box,
   Button,
-  ButtonGroup,
   IconButton,
   CircularProgress,
   Stack,
@@ -15,6 +13,13 @@ import StatCard from "../../Components/StatCard";
 import AnnouncementCard from "../../Components/AnnouncementCard";
 import { useNavigate } from "react-router-dom";
 import { getAnnouncementStats, getAnnouncements } from "../../Services/Data";
+
+const STATUS_MAPPING = {
+  All: "",
+  Published: "published",
+  Draft: "draft",
+  Unpublished: "unpublished",
+};
 
 const AnnouncementPage = () => {
   const [filter, setFilter] = useState("All");
@@ -27,97 +32,67 @@ const AnnouncementPage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const statusMapping = {
-    All: "",
-    Published: "published",
-    Draft: "draft",
-    Unpublished: "unpublished",
-  };
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
         setLoading(true);
+        setAnnouncements([]);
 
         const statsData = await getAnnouncementStats();
+        if (!isMounted) return;
         setStats(statsData.data || {});
 
-        const statusParam = statusMapping[filter];
-
+        const statusParam = STATUS_MAPPING[filter];
         const announcementsData = await getAnnouncements(statusParam, 1, 10);
 
-        console.log("FILTER:", filter);
-        console.log("STATUS PARAM:", statusParam);
-        console.log("API DATA:", announcementsData);
-
+        if (!isMounted) return;
         setAnnouncements(announcementsData);
       } catch (err) {
-        console.error("❌ Error fetching announcements:", err);
+        console.error("❌ Error:", err);
+        if (isMounted) setAnnouncements([]);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [filter]);
 
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="80vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="80vh">
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{ mt: 4, display: "flex", flexDirection: "column", gap: 4, pb: 5 }}
-    >
-      {/* Header */}
-      <Typography
-        variant="h5"
-        component="h1"
-        fontWeight="bold"
-        textAlign="start"
-      >
+    <Container maxWidth="xl" sx={{ mt: 4, pb: 5 }}>
+      <Typography variant="h5" component="h1" fontWeight="bold" mb={4}>
         Announcement
       </Typography>
 
-      {/* Stats */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3} sx={{ width: "100%" }}>
-          <StatCard />
-        </Grid>
-      </Grid>
+      <Box mb={4}>
+        <StatCard />
+      </Box>
 
-      {/* Filter & Action */}
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        flexWrap="wrap"
-        gap={2}
+        mb={4}
       >
-        {/* <ButtonGroup
-          variant="outlined"
-          aria-label="filter buttons"
-          sx={{
-            "& .MuiButton-root": {
-              textTransform: "none",
-              borderRadius: "8px",
-            },
-          }}
-        > */}
         <Stack direction="row" spacing={1}>
-          {["All", "Published", "Draft", "Unpublished"].map((item, index) => (
+          {["All", "Published", "Draft", "Unpublished"].map((item) => (
             <Button
-              key={index}
+              key={item}
               variant={filter === item ? "contained" : "outlined"}
               onClick={() => setFilter(item)}
             >
@@ -125,11 +100,8 @@ const AnnouncementPage = () => {
             </Button>
           ))}
         </Stack>
-        {/* </ButtonGroup> */}
 
         <IconButton
-          color="primary"
-          aria-label="Tambah pengumuman baru"
           sx={{
             bgcolor: "primary.main",
             color: "white",
@@ -144,25 +116,35 @@ const AnnouncementPage = () => {
         </IconButton>
       </Box>
 
-      {/* Announcements List */}
-      <Grid container spacing={3} sx={{ mt: 1, alignItems: "stretch" }}>
+      {/* ✅ BOX FLEX - 3 CARDS PER BARIS */}
+      <Box
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 3,
+        }}
+      >
         {announcements && announcements.length > 0 ? (
           announcements.map((announcement) => (
-            <Grid
-              item
+            <Box
               key={announcement.id}
-              xs={12}
-              sm={6}
-              md={4}
               onClick={() => navigate(`/announcement/${announcement.id}`)}
+              sx={{
+                flexBasis: {
+                  xs: "100%",
+                  sm: "calc(50% - 12px)",
+                  md: "calc(33.333% - 16px)",
+                },
+                cursor: "pointer",
+              }}
             >
               <AnnouncementCard announcement={announcement} />
-            </Grid>
+            </Box>
           ))
         ) : (
           <Typography>No announcements found</Typography>
         )}
-      </Grid>
+      </Box>
     </Container>
   );
 };
